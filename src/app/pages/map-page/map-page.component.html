@@ -1,0 +1,58 @@
+<div class="page-container">
+  <div class="map-container">
+    <google-map
+      height="100%"
+      width="100%"
+      [center]="center"
+      [zoom]="zoom">
+
+      <map-marker
+        *ngFor="let inc of incidents"
+        [position]="{ lat: inc.latitude, lng: inc.longitude }"
+        [label]="inc.type[0]"
+        (mapClick)="onMarkerClick(inc)">
+      </map-marker>
+
+    </google-map>
+  </div>
+
+  <div class="sidebar">
+    <h2>Reportes cercanos</h2>
+
+    <div class="filter">
+      <label>Tipo de incidente:</label>
+      <select [(ngModel)]="filterType" (change)="applyFilter()">
+        <option>Todos</option>
+        <option>Accidente</option>
+        <option>Asalto</option>
+        <option>Inundación</option>
+        <option>Incendio</option>
+      </select>
+    </div>
+
+    <div class="incident-list">
+      <div
+        class="incident-card"
+        *ngFor="let inc of incidents"
+        (click)="onMarkerClick(inc)">
+        <h3>{{ inc.type }}</h3>
+        <p>{{ inc.description }}</p>
+        <small>
+          {{ inc.latitude.toFixed(4) }}, {{ inc.longitude.toFixed(4) }}<br>
+          {{ inc.weather || 'Sin datos de clima' }}<br>
+          {{ inc.createdAt | date:'short' }}
+        </small>
+      </div>
+    </div>
+
+    <!-- 👇 Esto evita el "Object is possibly 'undefined'" -->
+    <div class="incident-detail" *ngIf="selectedIncident as incSel">
+      <h2>Detalle</h2>
+      <p><b>Tipo:</b> {{ incSel.type }}</p>
+      <p><b>Descripción:</b> {{ incSel.description }}</p>
+      <p><b>Clima:</b> {{ incSel.weather || 'N/A' }}</p>
+      <p><b>Ubicación:</b> {{ incSel.latitude }}, {{ incSel.longitude }}</p>
+      <p *ngIf="incSel.createdAt"><b>Fecha:</b> {{ incSel.createdAt | date:'short' }}</p>
+    </div>
+  </div>
+</div>

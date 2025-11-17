@@ -1,0 +1,40 @@
+.page-container {
+  display: flex;
+  height: 100vh;
+}
+
+.map-container {
+  flex: 2;
+}
+
+.sidebar {
+  flex: 1;
+  padding: 1rem;
+  background: #f8f8f8;
+  overflow-y: auto;
+}
+
+.incident-card {
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  background: white;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+.incident-card:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+
+.incident-detail {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+.filter {
+  margin-bottom: 1rem;
+}
