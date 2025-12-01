@@ -1,0 +1,41 @@
+<div class="admin-console">
+
+    <div class="kpi-grid">
+        <div class="kpi-card" *ngFor="let k of kpis">
+            <h3>{{ k.label }}</h3>
+            <p>{{ k.value }}</p>
+        </div>
+    </div>
+
+    <div class="charts-section">
+        <div class="chart-box">
+            <h2>Tendencia Semanal</h2>
+            <canvas id="weeklyChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+            <h2>Tipos de Incidentes</h2>
+            <canvas id="incidentTypesChart"></canvas>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Estado de Servicios</h2>
+        <div class="services">
+            <div class="service" *ngFor="let s of systemStatus">
+                <span>{{ s.name }}</span>
+                <span class="dot" [class.ok]="s.status" [class.fail]="!s.status"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Seguridad</h2>
+        <div class="security">
+            <p>Intentos fallidos: <strong>{{ securityStats.failedAttempts }}</strong></p>
+            <p>Intentos exitosos: <strong>{{ securityStats.successfulAttempts }}</strong></p>
+            <p>Último acceso admin: <strong>{{ securityStats.lastAdminAccess }}</strong></p>
+            <p>Usuarios activos ahora: <strong>{{ securityStats.activeUsers }}</strong></p>
+        </div>
+    </div>
+</div>

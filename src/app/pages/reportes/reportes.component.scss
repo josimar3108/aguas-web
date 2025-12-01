@@ -1,0 +1,135 @@
+.reportes-wrapper {
+    flex-grow: 1;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: var(--bg-main);
+    color: #e2e8f0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.title {
+    width: 100%;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filters label {
+    font-weight: bold;
+}
+
+.filters select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: white;
+    border: 1px solid #334155;
+}
+
+.report-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.report-card {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.report-card:hover {
+    transform: translateY(-3px);
+    border-color: #3b82f6;
+}
+
+.report-card h2 {
+    margin: 0 0 10px 0;
+    color: #93c5fd;
+}
+
+.report-card .desc {
+    margin-bottom: 10px;
+    color: #cbd5e1;
+}
+
+.report-card .coords,
+.report-card .meta {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 5px;
+}
+
+.tags {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tag {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.severity-alta {
+    background: #dc2626;
+}
+
+.severity-media {
+    background: #f97316;
+}
+
+.severity-baja {
+    background: #22c55e;
+}
+
+.status {
+    background: #3b82f6;
+}
+
+.details {
+    margin: 30px auto 0;
+    max-width: 500px;
+    width: 100%;
+    padding: 20px;
+    background: #1e293b;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.material-symbols-outlined {
+    font-size: 18px !important;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.coords .material-symbols-outlined,
+.meta .material-symbols-outlined {
+    font-size: 16px !important;
+    opacity: 0.9;
+}
+
+.details .material-symbols-outlined {
+    font-size: 22px !important;
+    margin-right: 6px;
+}

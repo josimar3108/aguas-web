@@ -1,20 +1,28 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { GoogleMapsModule } from '@angular/google-maps';
-import { FormsModule } from '@angular/forms';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-@Component({
-  selector: 'app-map-page',
-  standalone: true,
-  imports: [CommonModule, GoogleMapsModule, FormsModule], 
-  templateUrl: './map-page.component.html',
-  styleUrls: ['./map-page.component.scss']
+export interface Incident {
+  id: number;
+  type: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  weather: string;
+  createdAt: Date;
+  severity: 'Baja' | 'Media' | 'Alta';
+  status: 'En proceso' | 'Reportado' | 'Controlado' | 'Resuelto';
+}
+
+@Injectable({
+  providedIn: 'root'
 })
-export class MapPageComponent {
-  center: google.maps.LatLngLiteral = { lat: 21.8853, lng: -102.2916 };
-  zoom = 14;
+export class IncidentsService {
 
-  incidents = [
+  private baseUrl = `${environment.apiBaseUrl}/incidents`;
+
+  private localIncidents: Incident[] = [
     {
       id: 1,
       type: 'Accidente',
@@ -127,8 +135,34 @@ export class MapPageComponent {
     },
   ];
 
-  onMarkerClick(incident: any) {
-    this.center = { lat: incident.latitude, lng: incident.longitude }; 
-    this.zoom = 16; 
+  constructor(private http: HttpClient) {}
+
+  getNearby(lat: number, lng: number, radius: number = 3000): Observable<Incident[]> {
+    const params = new HttpParams()
+      .set('lat', lat)
+      .set('lng', lng)
+      .set('radius', radius);
+
+    return this.http.get<Incident[]>(this.baseUrl, { params });
+  }
+
+  create(incident: Incident): Observable<Incident> {
+    return this.http.post<Incident>(this.baseUrl, incident);
+  }
+
+  getAllLocal(): Incident[] {
+    return [...this.localIncidents]; // copia segura
+  }
+
+  getByIdLocal(id: number): Incident | undefined {
+    return this.localIncidents.find(i => i.id === id);
+  }
+
+  getBySeverity(severity: 'Baja' | 'Media' | 'Alta'): Incident[] {
+    return this.localIncidents.filter(i => i.severity === severity);
+  }
+
+  getActiveAlerts(): Incident[] {
+    return this.localIncidents.filter(i => i.status !== 'Resuelto');
   }
 }

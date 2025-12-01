@@ -1,0 +1,70 @@
+<div class="alertas-container">
+
+    <h1 class="title">Alertas Registradas</h1>
+
+    <div class="filters">
+
+        <div class="filter-item">
+            <label>Tipo</label>
+            <select [(ngModel)]="filterType" (change)="applyFilters()">
+                <option value="">Todos</option>
+                <option value="Accidente">Accidente</option>
+                <option value="Asalto">Asalto</option>
+                <option value="Incendio">Incendio</option>
+                <option value="Inundación">Inundación</option>
+            </select>
+        </div>
+
+        <div class="filter-item">
+            <label>Severidad</label>
+            <select [(ngModel)]="filterSeverity" (change)="applyFilters()">
+                <option value="">Todas</option>
+                <option value="Baja">Baja</option>
+                <option value="Media">Media</option>
+                <option value="Alta">Alta</option>
+            </select>
+        </div>
+
+        <div class="filter-item">
+            <label>Buscar</label>
+            <input type="text" placeholder="Descripción..." [(ngModel)]="searchText" (input)="applyFilters()" />
+        </div>
+
+        <button class="clear-btn" (click)="clearFilters()">Limpiar</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Clima</th>
+                    <th>Severidad</th>
+                    <th>Estatus</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let i of filtered">
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.type }}</td>
+                    <td>{{ i.description }}</td>
+                    <td>{{ i.weather }}</td>
+                    <td [class]="i.severity ? i.severity.toLowerCase() : ''">
+                        {{ i.severity }}
+                    </td>
+
+                    <td>{{ i.status }}</td>
+                    <td>{{ i.createdAt | date:'short' }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p *ngIf="filtered.length === 0" class="empty">
+            No se encontraron alertas… probablemente el sistema se está portando bien por primera vez
+        </p>
+    </div>
+</div>

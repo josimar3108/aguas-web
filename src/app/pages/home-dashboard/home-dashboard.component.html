@@ -1,0 +1,116 @@
+<div class="dashboard-container" [class.sidebar-open]="sidebarOpen">
+
+    <h2 class="dashboard-title">Panel de Mando Operacional</h2>
+
+    <div class="kpi-grid">
+        <div class="kpi-card" [ngClass]="'kpi-' + kpi.color" *ngFor="let kpi of kpis">
+
+            <div class="kpi-header">
+                <h3 class="kpi-title">{{ kpi.title }}</h3>
+
+                <span class="material-symbols-outlined kpi-icon">
+                    {{
+                    kpi.indicator === 'up'
+                    ? 'arrow_upward'
+                    : kpi.indicator === 'down'
+                    ? 'arrow_downward'
+                    : 'check_circle'
+                    }}
+                </span>
+            </div>
+
+            <p class="kpi-value">{{ kpi.value }}</p>
+            <span class="kpi-trend">{{ kpi.trend }}</span>
+        </div>
+    </div>
+
+    <div class="main-content-grid">
+
+        <div class="map-section card">
+            <div class="card-header">
+                <span class="material-symbols-outlined">
+                    globe_location_pin
+                </span>
+                <h3 class="card-title">Mapa Interactivo de Incidentes (En Vivo)</h3>
+            </div>
+
+            <div class="map-container">
+                <app-map-page></app-map-page>
+            </div>
+        </div>
+
+        <div class="activity-flow card">
+
+            <div class="card-header">
+                <span class="material-symbols-outlined">browse_activity</span>
+                <h3 class="card-title">Flujo de Actividad Reciente</h3>
+            </div>
+
+            <ul class="activity-list">
+                <li><span>[Hace 2 min]</span> Nuevo incidente (Inundación) en Av. Juárez.</li>
+                <li><span>[Hace 5 min]</span> El Equipo 3 asignado a Reporte #4521 (Tráfico).</li>
+                <li><span>[Hace 10 min]</span> Alerta crítica emitida por cierre de calle.</li>
+                <li><span>[Hace 15 min]</span> Reporte #4525 marcado como RESUELTO.</li>
+                <li><span>[Hace 20 min]</span> Nuevo usuario administrador añadido.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="task-management-grid">
+
+        <div class="pending-reports-section card">
+
+            <div class="card-header">
+                <span class="material-symbols-outlined">breaking_news</span>
+                <h3 class="card-title">Reportes Pendientes de Asignación</h3>
+            </div>
+
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo</th>
+                        <th>Ubicación</th>
+                        <th>Reportado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let report of pendingReports">
+                        <td>#{{ report.id }}</td>
+                        <td>{{ report.type }}</td>
+                        <td>{{ report.location }}</td>
+                        <td>{{ report.timeReported }}</td>
+                        <td>
+                            <button class="action-btn" (click)="assignReport(report.id)">Asignar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="team-load-section card">
+
+            <div class="card-header">
+                <span class="material-symbols-outlined">construction</span>
+                <h3 class="card-title">Carga de Trabajo por Equipo</h3>
+            </div>
+
+            <div class="team-load-chart">
+                <div class="bar" *ngFor="let item of teamLoad">
+                    <span class="bar-label">{{ item.team }}</span>
+
+                    <div class="bar-fill" [style.width.%]="getBarWidth(item.count)">
+                        <span class="bar-value">{{ item.count }} incidentes</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

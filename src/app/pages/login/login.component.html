@@ -1,0 +1,58 @@
+<div class="bg-base"></div>
+
+<div class="background">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1600 900"
+        preserveAspectRatio="xMidYMid slice">
+        <defs>
+            <path id="wave" fill="#0A224A" d="M-363.852,502.589c0,0,236.988-41.997,505.475,0
+                s371.981,38.998,575.971,0s293.985-39.278,505.474,5.859
+                s493.475,48.368,716.963-4.995v560.106H-363.852V502.589z" />
+        </defs>
+
+        <g>
+            <use href="#wave" opacity=".35" fill="#0A224A">
+                <animateTransform attributeName="transform" type="translate" dur="8s"
+                    values="270 230; -334 180; 270 230" repeatCount="indefinite" />
+            </use>
+
+            <use href="#wave" opacity=".55" fill="#0F2E6D">
+                <animateTransform attributeName="transform" type="translate" dur="6s" values="-270 230;243 220;-270 230"
+                    repeatCount="indefinite" />
+            </use>
+
+            <use href="#wave" opacity=".9" fill="#153B8F">
+                <animateTransform attributeName="transform" type="translate" dur="4s" values="0 230;-140 200;0 230"
+                    repeatCount="indefinite" />
+            </use>
+        </g>
+    </svg>
+</div>
+
+<div class="login">
+    <img src="logo.png" />
+    <h2>Bienvenido a ¡Aguas!</h2>
+    <h3>Aguas: Información instantánea, decisiones inteligentes.</h3>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="textbox">
+            <input type="text" formControlName="username" placeholder="" />
+            <label>Usuario</label>
+        </div>
+
+        <div class="textbox">
+            <input type="password" formControlName="password" placeholder="" />
+            <label>Contraseña</label>
+        </div>
+
+        <button type="submit">
+            <p>Ingresar</p>
+            <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+
+        <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </form>
+
+    <a>¿Olvidaste tu contraseña?</a>
+
+    <p class="footer">¿Aún no tienes cuenta? <a>Regístrate</a></p>
+</div>

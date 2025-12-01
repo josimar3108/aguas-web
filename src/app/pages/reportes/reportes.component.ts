@@ -1,20 +1,30 @@
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { GoogleMapsModule } from '@angular/google-maps';
 import { FormsModule } from '@angular/forms';
 
-@Component({
-  selector: 'app-map-page',
-  standalone: true,
-  imports: [CommonModule, GoogleMapsModule, FormsModule], 
-  templateUrl: './map-page.component.html',
-  styleUrls: ['./map-page.component.scss']
-})
-export class MapPageComponent {
-  center: google.maps.LatLngLiteral = { lat: 21.8853, lng: -102.2916 };
-  zoom = 14;
+interface Incident {
+  id: number;
+  type: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  weather?: string;
+  createdAt?: Date;
+  status?: string;
+  severity?: string;
+}
 
-  incidents = [
+@Component({
+  selector: 'app-reportes',
+  standalone: true,
+  imports: [NgFor, NgIf, CommonModule, FormsModule],
+  templateUrl: './reportes.component.html',
+  styleUrl: './reportes.component.scss',
+})
+export class ReportesComponent {
+  filterType: string = '';
+
+  incidents: Incident[] = [
     {
       id: 1,
       type: 'Accidente',
@@ -127,8 +137,17 @@ export class MapPageComponent {
     },
   ];
 
-  onMarkerClick(incident: any) {
-    this.center = { lat: incident.latitude, lng: incident.longitude }; 
-    this.zoom = 16; 
+  filteredIncidents: Incident[] = this.incidents;
+
+  selectedIncident: Incident | null = null;
+
+  applyFilter() {
+    this.filteredIncidents = this.filterType
+      ? this.incidents.filter((i) => i.type === this.filterType)
+      : this.incidents;
+  }
+
+  showDetails(incident: Incident) {
+    this.selectedIncident = incident;
   }
 }

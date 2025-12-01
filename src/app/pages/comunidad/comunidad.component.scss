@@ -1,0 +1,217 @@
+:host {
+    display: block;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color: var(--text-light);
+}
+
+.comunidad-wrapper {
+    padding: 20px;
+    max-width: 100%;
+    margin: 0 auto;
+    gap: 20px;
+    background: var(--bg-main);
+}
+
+.header {
+    margin-bottom: 18px;
+
+    h1 {
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-light);
+    }
+
+    .subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 6px;
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 16px;
+    color: var(--text-light);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(15px);
+}
+
+.card h2 {
+    font-size: 1.05em;
+    font-weight: 500;
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+}
+
+.admin-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 14px;
+}
+
+.admin-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.admin-card .avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.admin-card .rol {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--danger);
+    display: inline-block;
+    margin-bottom: 8px;
+
+    &.online {
+        background: var(--success);
+    }
+}
+
+.accion,
+.tiempo {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.logs li {
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.foro {
+    margin-top: 8px;
+}
+
+.nuevo-post {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+
+    input,
+    textarea {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--card-border);
+        padding: 12px;
+        border-radius: 10px;
+        color: var(--text-light);
+        resize: vertical;
+    }
+
+    button {
+        background: var(--primary);
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: none;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+
+        &:hover {
+            filter: brightness(1.1);
+        }
+    }
+}
+
+.post {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 14px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+
+    .post-head h3 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .post-head small {
+        color: var(--text-muted);
+    }
+
+    .post-body {
+        margin: 10px 0;
+        color: var(--text-light);
+    }
+
+    .respuestas {
+        margin-top: 10px;
+        padding-left: 10px;
+        border-left: 2px solid rgba(255, 255, 255, 0.08);
+    }
+}
+
+.reply {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+
+    input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--card-border);
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--text-light);
+    }
+
+    button {
+        background: var(--success);
+        border: none;
+        padding: 10px 12px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+
+        &:hover {
+            filter: brightness(1.1);
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+

@@ -1,0 +1,30 @@
+<aside [class.open]="isOpen" class="sidebar">
+    <div class="inner">
+        <header>
+            <button type="button" (click)="toggleSidebar()">
+                <span class="material-symbols-outlined">
+                    {{ isOpen ? 'close' : 'menu' }}
+                </span>
+            </button>
+            <div class="logo-container">
+                <span class="app-name">¡Aguas!</span>
+            </div>
+        </header>
+
+        <nav>
+            <button type="button" *ngFor="let navItem of navItems" (click)="onNavItemClick(navItem.action || '')">
+                <span class="material-symbols-outlined">{{ navItem.icon }}</span>
+                <p>{{ navItem.item }}</p>
+            </button>
+        </nav>
+
+        <div class="user-info">
+            <img [src]="user?.avatar || 'assets/user.png'" class="avatar" />
+
+            <div class="details" *ngIf="isOpen">
+                <p class="name">{{ user?.name }}</p>
+                <p class="email">{{ user?.email }}</p>
+            </div>
+        </div>
+    </div>
+</aside>

@@ -1,0 +1,99 @@
+<div class="comunidad-wrapper">
+    <div class="header">
+        <h1>Configuraciones del Sistema</h1>
+        <p class="subtitle">Administración de usuarios y respaldos</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>Gestión de Usuarios</h2>
+
+            <div class="admin-list">
+                <div class="admin-card" *ngFor="let u of users">
+
+                    <div class="info">
+                        <div class="avatar">{{ u.nombre.charAt(0) }}</div>
+                        <p class="accion">{{ u.nombre }}</p>
+                        <p class="rol">{{ u.rol }}</p>
+                    </div>
+
+                    <div class="acciones">
+                        <span class="status" [class.online]="u.activo"></span>
+
+                        <button (click)="openUserModal(u)">Editar</button>
+                        <button class="danger" (click)="deleteUser(u.id)">Eliminar</button>
+                        <button class="warning" (click)="forcePasswordReset(u)">Reset Pass</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="add-user" (click)="openUserModal()">+ Nuevo Usuario</button>
+        </div>
+
+        <!-- Backups -->
+        <div class="card">
+            <h2>Backups</h2>
+
+            <button class="generate-backup-btn" (click)="generateBackup()">Generar Respaldo Manual</button>
+
+            <div class="auto-backup">
+                <label>
+                    <input type="checkbox" [(ngModel)]="autoBackup.enabled"> Activar respaldos automáticos
+                </label>
+
+                <div *ngIf="autoBackup.enabled" class="auto-options">
+                    <label>Frecuencia:
+                        <select [(ngModel)]="autoBackup.frecuencia">
+                            <option value="diario">Diario</option>
+                            <option value="semanal">Semanal</option>
+                        </select>
+                    </label>
+
+                    <label>Hora:
+                        <input type="time" [(ngModel)]="autoBackup.hora">
+                    </label>
+                </div>
+            </div>
+
+            <label class="upload-btn">
+                Cargar Respaldo
+                <input type="file" (change)="uploadBackup($event)">
+            </label>
+
+            <ul class="logs">
+                <li *ngFor="let b of backups">
+                    <strong>{{ b.fecha }}</strong> — {{ b.tamano }} ({{ b.tipo }})
+                    <button class="restore" (click)="restoreBackup(b)">Restaurar</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" *ngIf="showUserModal">
+        <div class="modal-content card">
+            <h2>{{ newUser ? 'Nuevo Usuario' : 'Editar Usuario' }}</h2>
+
+            <label>Nombre
+                <input type="text" [(ngModel)]="selectedUser.nombre">
+            </label>
+
+            <label>Rol
+                <select [(ngModel)]="selectedUser.rol">
+                    <option>Administrador</option>
+                    <option>Supervisor</option>
+                    <option>Operador</option>
+                </select>
+            </label>
+
+            <label>
+                <input type="checkbox" [(ngModel)]="selectedUser.activo"> Usuario Activo
+            </label>
+
+            <div class="modal-actions">
+                <button (click)="saveUser()">Guardar</button>
+                <button class="danger" (click)="showUserModal=false">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>

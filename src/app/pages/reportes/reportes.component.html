@@ -1,0 +1,55 @@
+<div class="reportes-wrapper">
+
+    <h1 class="title">Reportes de Incidentes</h1>
+
+    <div class="filters">
+        <label>Tipo de incidente:</label>
+        <select [(ngModel)]="filterType" (change)="applyFilter()">
+            <option value="">Todos</option>
+            <option value="Accidente">Accidente</option>
+            <option value="Asalto">Asalto</option>
+            <option value="Inundación">Inundación</option>
+            <option value="Incendio">Incendio</option>
+        </select>
+    </div>
+
+    <div class="report-list">
+        <div class="report-card" *ngFor="let inc of filteredIncidents" (click)="showDetails(inc)">
+            <h2>{{ inc.type }}</h2>
+
+            <p class="desc">{{ inc.description }}</p>
+
+            <small class="coords">
+                <span class="material-symbols-outlined">location_on</span> {{ inc.latitude.toFixed(4) }}, {{
+                inc.longitude.toFixed(4) }}
+            </small>
+
+            <small class="meta">
+                <span class="material-symbols-outlined">
+                    weather_mix
+                </span> {{ inc.weather || 'Sin datos de clima' }} <br>
+                <span class="material-symbols-outlined">
+                    nest_clock_farsight_analog
+                </span> {{ inc.createdAt | date:'short' }}
+            </small>
+
+            <div class="tags">
+                <span class="tag severity-{{ inc.severity?.toLowerCase() }}">{{ inc.severity }}</span>
+                <span class="tag status">{{ inc.status }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="details" *ngIf="selectedIncident as inc">
+        <h2>Detalle del reporte</h2>
+
+        <p><b>Tipo:</b> {{ inc.type }}</p>
+        <p><b>Descripción:</b> {{ inc.description }}</p>
+        <p><b>Clima:</b> {{ inc.weather || 'N/A' }}</p>
+        <p><b>Ubicación:</b> {{ inc.latitude }}, {{ inc.longitude }}</p>
+        <p><b>Fecha:</b> {{ inc.createdAt | date:'medium' }}</p>
+
+        <p><b>Severidad:</b> {{ inc.severity }}</p>
+        <p><b>Status:</b> {{ inc.status }}</p>
+    </div>
+</div>

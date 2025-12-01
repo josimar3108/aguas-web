@@ -1,1 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+    --color-primary: #4169e1; 
+    --color-muted: #a0b4ff;  
+    --bg-base: #0a1124;       
+    --login-bg: rgba(25, 35, 60, 0.55); 
+    --login-shadow: rgba(0, 0, 0, 0.2);  
+    --input-bg: rgba(35, 45, 70, 0.55);
+    --input-focus: #4169e1;
+    --error-color: #ff4d4f;
+
+    --bg-main: #0f172a;
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.12);
+    --text-light: #e2e8f0;
+    --text-muted: #94a3b8;
+    --primary: #4f46e5;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Euclid Circular A", "Poppins";
+    color: #f2f6ff;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+app-root {
+    min-height: 100%;
+    display: block;
+}

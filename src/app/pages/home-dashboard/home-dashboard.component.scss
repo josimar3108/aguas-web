@@ -1,0 +1,220 @@
+.dashboard-container {
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: var(--bg-main);
+}
+
+.card-header,
+.kpi-header {
+    display: flex;
+    align-items: center; 
+    gap: 8px;
+}
+
+.card-header .material-symbols-outlined,
+.kpi-header .material-symbols-outlined {
+    font-size: 25px;           
+    line-height: 1;             
+    vertical-align: middle;     
+    position: relative;
+    top: -5px;                 
+}
+
+app-map-page { 
+    display: block; 
+    height: 100%; 
+    width: 100%;
+}
+
+.dashboard-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-light);
+}
+
+.map-section {
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-container {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 16px;
+    color: var(--text-light);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(20px);
+}
+
+.card-title {
+    font-size: 1.05em;
+    font-weight: 500;
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+}
+
+.kpi-card {
+    @extend .card;
+    border-left: 4px solid transparent;
+    transition: 0.3s;
+}
+
+.kpi-primary { border-left-color: var(--primary); }
+.kpi-success { border-left-color: var(--success); }
+.kpi-warning { border-left-color: var(--warning); }
+.kpi-danger  { border-left-color: var(--danger); }
+
+.kpi-value {
+    font-size: 2.3em;
+    font-weight: 700;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.map-placeholder,
+.chart-placeholder {
+    @extend .card;
+    min-height: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.activity-list li {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+    padding: 10px 0;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table th {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-light);
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+.report-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pending-reports-section {
+    height: auto;
+    max-height: 420px;     
+    overflow: auto;        
+}
+
+.pending-reports-section.card {
+    padding: 14px !important;
+    border-radius: 12px;
+}
+
+.pending-reports-section .report-table th,
+.pending-reports-section .report-table td {
+    padding: 8px !important;
+}
+
+.report-table td button {
+    margin: 0 auto;
+    display: block;
+}
+
+.action-btn {
+    background: var(--primary);
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: white;
+    border: none;
+    transition: 0.3s;
+
+    &:hover {
+        background: #4338ca;
+    }
+}
+
+.main-content-grid {
+    display: grid;
+    grid-template-columns: 2.3fr 1fr;
+    gap: 16px;
+}
+
+.task-management-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+.team-load-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.bar {
+    display: flex;
+    flex-direction: column;
+}
+
+.bar-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 4px;
+}
+
+.bar-fill {
+    position: relative;
+    height: 28px;
+    border-radius: 14px;
+    background: var(--primary);
+    overflow: hidden;
+    transition: width 0.5s ease;
+}
+
+.bar-fill span.bar-value {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+@media (max-width: 992px) {
+    .main-content-grid,
+    .task-management-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .map-section {
+        height: 320px;
+    }
+}
