@@ -1,15 +1,21 @@
 <div class="page-wrapper is-full-page">
-  <div class="map-container">
+  <div class="map-container relative-container">
+
     <div class="map-frame">
       <div class="map-inner">
         <google-map [height]="'100%'" [width]="'100%'" [center]="center" [zoom]="zoom">
 
-          <map-marker *ngFor="let inc of incidents" [position]="{lat: inc.latitude, lng: inc.longitude}"
-            [title]="inc.type" (mapClick)="onMarkerClick(inc)">
+          <map-marker *ngFor="let inc of realIncidents" [position]="{lat: inc.latitude, lng: inc.longitude}"
+            [title]="inc.type" [icon]="obtenerIcono(inc.type)">
           </map-marker>
 
         </google-map>
       </div>
     </div>
+
+    <button class="btn-gps" (click)="irAmiUbicacion()" title="Ir a mi ubicación actual">
+      <span class="icono-gps">📍</span>
+    </button>
+
   </div>
 </div>

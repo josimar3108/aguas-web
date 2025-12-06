@@ -1,168 +1,74 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-export interface Incident {
-  id: number;
-  type: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  weather: string;
-  createdAt: Date;
-  severity: 'Baja' | 'Media' | 'Alta';
-  status: 'En proceso' | 'Reportado' | 'Controlado' | 'Resuelto';
-}
+import { Incident } from '../Interfaces/incident.interface';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IncidentsService {
 
-  private baseUrl = `${environment.apiBaseUrl}/incidents`;
-
-  private localIncidents: Incident[] = [
-    {
-      id: 1,
-      type: 'Accidente',
-      description: 'Colisión entre dos vehículos',
-      latitude: 21.8818,
-      longitude: -102.2916,
-      weather: 'Soleado',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'En proceso',
-    },
-    {
-      id: 2,
-      type: 'Incendio',
-      description: 'Incendio en un lote baldío',
-      latitude: 21.879,
-      longitude: -102.296,
-      weather: 'Nublado',
-      createdAt: new Date(),
-      severity: 'Media',
-      status: 'Controlado',
-    },
-    {
-      id: 3,
-      type: 'Accidente',
-      description: 'Motociclista derrapado en curva peligrosa',
-      latitude: 21.8855,
-      longitude: -102.3001,
-      weather: 'Lluvioso',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'Reportado',
-    },
-    {
-      id: 4,
-      type: 'Asalto',
-      description: 'Robo a transeúnte en vía pública',
-      latitude: 21.8701,
-      longitude: -102.2803,
-      weather: 'Soleado',
-      createdAt: new Date(),
-      severity: 'Media',
-      status: 'En proceso',
-    },
-    {
-      id: 5,
-      type: 'Asalto',
-      description: 'Intento de robo en tienda de conveniencia',
-      latitude: 21.8779,
-      longitude: -102.2847,
-      weather: 'Nublado',
-      createdAt: new Date(),
-      severity: 'Baja',
-      status: 'Resuelto',
-    },
-    {
-      id: 6,
-      type: 'Inundación',
-      description: 'Calle principal con acumulación de agua',
-      latitude: 21.8922,
-      longitude: -102.3055,
-      weather: 'Tormenta',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'En proceso',
-    },
-    {
-      id: 7,
-      type: 'Inundación',
-      description: 'Filtros de drenaje saturados',
-      latitude: 21.8633,
-      longitude: -102.2901,
-      weather: 'Lluvia ligera',
-      createdAt: new Date(),
-      severity: 'Media',
-      status: 'Controlado',
-    },
-    {
-      id: 8,
-      type: 'Incendio',
-      description: 'Fuga de gas provocando incendio pequeño',
-      latitude: 21.876,
-      longitude: -102.2999,
-      weather: 'Soleado',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'En proceso',
-    },
-    {
-      id: 9,
-      type: 'Accidente',
-      description: 'Atropellamiento leve de peatón',
-      latitude: 21.8888,
-      longitude: -102.2973,
-      weather: 'Nublado',
-      createdAt: new Date(),
-      severity: 'Baja',
-      status: 'Controlado',
-    },
-    {
-      id: 10,
-      type: 'Asalto',
-      description: 'Robo de vehículo con violencia',
-      latitude: 21.8895,
-      longitude: -102.3102,
-      weather: 'Soleado',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'En proceso',
-    },
-  ];
+  private baseUrl = environment.apiBaseUrl || 'http://10.151.204.19:5000';
+  private readonly CLAVE_SECRETA = 'AguasMovilSeguro'; 
 
   constructor(private http: HttpClient) {}
 
-  getNearby(lat: number, lng: number, radius: number = 3000): Observable<Incident[]> {
-    const params = new HttpParams()
-      .set('lat', lat)
-      .set('lng', lng)
-      .set('radius', radius);
+  getAllReal(): Observable<Incident[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/obtener_reportes`).pipe(
+      map(encryptedList => {
+        let allIncidents: Incident[] = [];
 
-    return this.http.get<Incident[]>(this.baseUrl, { params });
+        encryptedList.forEach(encryptedString => {
+          try {
+            // --- CORRECCIÓN AQUÍ ---
+            // Limpiamos la cadena quitando saltos de línea (\n) y espacios que mete Android
+            const cleanString = encryptedString.replace(/\s/g, ''); 
+            // -----------------------
+
+            const bytes = CryptoJS.AES.decrypt(cleanString, CryptoJS.enc.Utf8.parse(this.CLAVE_SECRETA), {
+              mode: CryptoJS.mode.ECB,
+              padding: CryptoJS.pad.Pkcs7
+            });
+            
+            const jsonString = bytes.toString(CryptoJS.enc.Utf8);
+
+            if (jsonString) {
+              const userReports: any[] = JSON.parse(jsonString);
+
+              const mappedReports: Incident[] = userReports.map(r => ({
+                id: r.idReporte,
+                type: r.type || r.tipo,
+                description: r.descripcion,
+                latitude: r.datosGeo?.latitud || r.latitud || 0,
+                longitude: r.datosGeo?.longitud || r.longitud || 0,
+                address: r.datosGeo?.direccion || 'Ubicación GPS',
+                weather: r.datosClima?.condicion || r.clima || 'Desconocido',
+                temperature: r.datosClima?.temperatura, 
+                fecha: r.fecha, 
+                status: r.estado || 'PENDIENTE',
+                severity: this.calcularSeveridad(r.type || r.tipo)
+              }));
+
+              allIncidents = [...allIncidents, ...mappedReports];
+            }
+          } catch (e) {
+            console.error('Error procesando un paquete de datos:', e);
+            // Si falla uno, no rompemos todo el ciclo, solo lo ignoramos
+          }
+        });
+
+        return allIncidents;
+      })
+    );
   }
 
-  create(incident: Incident): Observable<Incident> {
-    return this.http.post<Incident>(this.baseUrl, incident);
-  }
-
-  getAllLocal(): Incident[] {
-    return [...this.localIncidents]; // copia segura
-  }
-
-  getByIdLocal(id: number): Incident | undefined {
-    return this.localIncidents.find(i => i.id === id);
-  }
-
-  getBySeverity(severity: 'Baja' | 'Media' | 'Alta'): Incident[] {
-    return this.localIncidents.filter(i => i.severity === severity);
-  }
-
-  getActiveAlerts(): Incident[] {
-    return this.localIncidents.filter(i => i.status !== 'Resuelto');
+  private calcularSeveridad(tipo: string): string {
+    if (!tipo) return 'Baja';
+    const t = tipo.toLowerCase();
+    if (t.includes('accidente') || t.includes('incendio') || t.includes('inundacion')) return 'Alta';
+    if (t.includes('asalto') || t.includes('robo')) return 'Media';
+    return 'Baja';
   }
 }

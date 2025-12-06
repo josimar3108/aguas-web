@@ -1,67 +1,122 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
+  FormBuilder,
   FormGroup,
-  FormControl,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ServicioUsuarios } from '../../services/usuarios.service';
+import { AccesosService } from '../../services/accesos.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent {
-  loginForm: FormGroup;
+export class LoginComponent
+{
+  formularioLogin: FormGroup;
+  mensajeError: string = '';
 
-  users = [
-    { user: 'Osbaldo', password: '347491' },
-    { user: 'Ian', password: '346169' },
-    { user: 'Josimar', password: '347589' },
-    { user: 'Angel', password: '346718' },
-  ];
-
-  errorMessage: string = '';
-
-  constructor(private router: Router) {
-    this.loginForm = new FormGroup({
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required]),
+  constructor(
+    private enrutador: Router,
+    private servicioUsuarios: ServicioUsuarios,
+    private servicioAccesos: AccesosService,
+    private constructorFormulario: FormBuilder
+  )
+  {
+    //Inicializar el formulario
+    this.formularioLogin = this.constructorFormulario.group({
+      usuario: ['', Validators.required],
+      contrasena: ['', Validators.required],
     });
   }
 
-  onSubmit() {
-    this.errorMessage = '';
-
-    if (this.loginForm.invalid) {
-      this.errorMessage = 'Por favor completa todos los campos';
+  iniciarSesion()
+  {
+    if(this.formularioLogin.invalid)
+    {
+      this.mensajeError = 'Por favor completa todos los campos.';
       return;
     }
 
-    const username = this.loginForm.value.username.trim();
-    const password = this.loginForm.value.password.trim();
+    const { usuario, contrasena } = this.formularioLogin.value;
 
-    const found = this.users.find(
-      (u) => u.user === username && u.password === password
+    this.servicioUsuarios.obtenerUsuarios().subscribe(
+      (listaUsuarios: any[]) =>
+      {
+        //Depurar datos recibidos
+        console.log('Datos recibidos del servidor:', listaUsuarios);
+
+        //Buscar usuario (Validar nombres de propiedades comunes en español e inglés)
+        const usuarioEncontrado = listaUsuarios.find(
+          (u) =>
+          {
+            const nombreUsuario = u.usuario || u.username || u.nombre;
+            const correoUsuario = u.correo || u.email;
+            return nombreUsuario === usuario || correoUsuario === usuario;
+          }
+        );
+
+        if(usuarioEncontrado)
+        {
+          //Obtener rol y contraseña manejando posibles nombres de variables
+          const rol = usuarioEncontrado.rol || usuarioEncontrado.role || '';
+          const passReal = usuarioEncontrado.password || usuarioEncontrado.contrasena || '';
+
+          //Validar si es administrador
+          if(rol.toLowerCase() === 'administrador' || rol.toLowerCase() === 'admin')
+          {
+            //Validar contraseña
+            if(String(passReal) === String(contrasena))
+            {
+              //Registrar acceso
+              const nuevoAcceso = {
+                fecha: new Date().toISOString(),
+                usuario: usuarioEncontrado.correo || usuarioEncontrado.email,
+                ip: 'Web Admin',
+                navegador: navigator.userAgent,
+                resultado: 'exitoso',
+                intentos: 1,
+                ubicacion: 'México',
+              };
+
+              this.servicioAccesos.registrarNuevoAcceso(nuevoAcceso).subscribe({
+                next: () => console.log('Acceso registrado'),
+                error: (err) => console.error('Error al registrar acceso', err),
+              });
+
+              localStorage.setItem(
+                'usuarioSesion',
+                JSON.stringify(usuarioEncontrado)
+              );
+              
+              this.enrutador.navigate(['/home']);
+            }
+            else
+            {
+              this.mensajeError = 'Contraseña incorrecta.';
+            }
+          }
+          else
+          {
+            this.mensajeError = 'Acceso denegado: Solo administradores.';
+          }
+        }
+        else
+        {
+          this.mensajeError = 'Usuario no encontrado.';
+        }
+      },
+      (error) =>
+      {
+        console.error(error);
+        this.mensajeError = 'Error de conexión con el servidor.';
+      }
     );
-
-    if (found) {
-      const loggedUser = {
-        name: found.user,
-        email: `${found.user.toLowerCase()}@aguas.com`,
-        avatar: `https://ui-avatars.com/api/?name=${found.user}`,
-      };
-
-      localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
-
-      this.errorMessage = '';
-      this.router.navigate(['/home']);
-    } else {
-      this.errorMessage = 'Usuario o contraseña incorrectos';
-    }
   }
 }

@@ -1,45 +1,77 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-
-import { IncidentsService, Incident } from '../../services/incidents.service';
+import { IncidentsService } from '../../services/incidents.service';
+import { Incident } from '../../Interfaces/incident.interface';
 
 @Component({
   selector: 'app-alertas',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgFor, NgIf, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './alertas.component.html',
   styleUrls: ['./alertas.component.scss']
 })
-export class AlertasComponent {
+export class AlertasComponent implements OnInit {
+  
   incidents: Incident[] = [];
   filtered: Incident[] = [];
+  loading: boolean = true;
 
-  filterType = '';
-  filterSeverity = '';
-  searchText = '';
+  // Filtros
+  filterType: string = '';
+  searchText: string = '';
 
   constructor(private incidentService: IncidentsService) {}
 
   ngOnInit(): void {
-    this.incidents = this.incidentService.getAllLocal();
-    this.filtered = [...this.incidents];
+    this.cargarAlertas();
+  }
+
+  cargarAlertas() {
+    this.loading = true;
+    
+    this.incidentService.getAllReal().subscribe({
+      next: (data) => {
+        // Ordenar por fecha descendente (lo más nuevo primero)
+        this.incidents = data.sort((a: any, b: any) => {
+          const fechaA = new Date(a.fecha || 0).getTime();
+          const fechaB = new Date(b.fecha || 0).getTime();
+          return fechaB - fechaA;
+        });
+
+        this.filtered = [...this.incidents];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar alertas:', err);
+        this.loading = false;
+      }
+    });
   }
 
   applyFilters(): void {
+    const texto = this.searchText.toLowerCase().trim();
+
     this.filtered = this.incidents.filter(incident => {
+      // 1. Filtro por Tipo
       const matchType = !this.filterType || incident.type === this.filterType;
-      const matchSeverity = !this.filterSeverity || incident.severity === this.filterSeverity;
-      const matchSearch = !this.searchText || incident.description.toLowerCase().includes(this.searchText.toLowerCase());
-      return matchType && matchSeverity && matchSearch;
+      
+      // 2. Filtro por Texto (busca en descripción, dirección o tipo)
+      const descripcion = incident.description ? incident.description.toLowerCase() : '';
+      const direccion = incident.address ? incident.address.toLowerCase() : '';
+      const tipo = incident.type ? incident.type.toLowerCase() : '';
+
+      const matchSearch = !texto || 
+                          descripcion.includes(texto) || 
+                          direccion.includes(texto) || 
+                          tipo.includes(texto);
+      
+      return matchType && matchSearch;
     });
   }
 
   clearFilters(): void {
     this.filterType = '';
-    this.filterSeverity = '';
     this.searchText = '';
     this.filtered = [...this.incidents];
   }

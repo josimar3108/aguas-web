@@ -1,3 +1,8 @@
+/* VARIABLES DE REFERENCIA
+   --bg-main, --card-bg, --text-light, --text-muted, --card-border,
+   --input-bg, --input-focus, --danger, --success, --warning, --primary
+*/
+
 .alertas-container {
     display: flex;
     flex-direction: column;
@@ -6,14 +11,24 @@
     padding: 20px;
     background: var(--bg-main);
     box-sizing: border-box;
+    color: var(--text-light);
 
-    .title {
-        font-size: 26px;
+    /* CABECERA */
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 20px;
-        font-weight: 600;
-        color: var(--text-light);
+
+        .title {
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin: 0;
+        }
     }
 
+    /* SECCIÓN DE FILTROS */
     .filters {
         display: flex;
         flex-wrap: wrap;
@@ -24,99 +39,304 @@
         .filter-item {
             display: flex;
             flex-direction: column;
-            min-width: 180px;
+            min-width: 160px;
+            /* Reducido un poco */
 
             label {
                 font-size: 14px;
-                margin-bottom: 4px;
+                margin-bottom: 6px;
                 color: var(--text-muted);
+                font-weight: 500;
             }
 
-            select,
-            input {
-                padding: 8px 10px;
-                border-radius: 6px;
+            select {
+                padding: 0 10px;
+                height: 38px;
+                /* ALTURA REDUCIDA (antes 42px) */
+                border-radius: 8px;
                 border: 1px solid var(--card-border);
                 background: var(--input-bg);
                 color: var(--text-light);
+                font-size: 14px;
+                cursor: pointer;
 
                 &:focus {
                     outline: 2px solid var(--input-focus);
+                    border-color: transparent;
                 }
             }
         }
 
-        .clear-btn {
-            padding: 8px 14px;
-            border: none;
-            background: var(--danger);
-            border-radius: 6px;
-            color: #fff;
-            cursor: pointer;
-            height: 38px;
-            align-self: center;
+        /* BUSCADOR AJUSTADO */
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            max-width: 320px;
+            /* <--- LÍMITE DE ANCHO PARA QUE NO SEA GIGANTE */
 
-            &:hover {
-                background: var(--danger);
+            .input-wrapper {
+                display: flex;
+                align-items: center;
+                height: 38px;
+                /* ALTURA REDUCIDA para coincidir con el select */
+                background: var(--input-bg);
+                border: 1px solid var(--card-border);
+                border-radius: 8px;
+                padding: 0 10px;
+                transition: all 0.2s ease;
+
+                &:focus-within {
+                    outline: 2px solid var(--input-focus);
+                    border-color: transparent;
+                }
+
+                .icon {
+                    color: var(--text-muted);
+                    font-size: 18px;
+                    /* Icono un poco más sutil */
+                    margin-right: 8px;
+                }
+
+                input {
+                    flex: 1;
+                    border: none;
+                    background: transparent;
+                    outline: none;
+                    color: var(--text-light);
+                    font-size: 14px;
+                    padding: 0;
+                    min-width: 0;
+
+                    &::placeholder {
+                        color: var(--text-muted);
+                        opacity: 0.7;
+                    }
+                }
+
+                .clear-btn {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-muted);
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 4px;
+                    margin-left: 8px;
+                    border-radius: 50%;
+
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.1);
+                        color: var(--danger);
+                    }
+                }
             }
         }
     }
 
+    /* TABLA Y CONTENEDOR */
+    /* TABLA Y CONTENEDOR */
     .table-wrapper {
         flex: 1 1 auto;
         min-height: 0;
-        max-height: calc(100vh - 140px);
         overflow-y: auto;
         width: 100%;
-        display: flex;
-        flex-direction: column;
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        position: relative;
+
+        /* Mensajes de carga y vacío */
+        .loading-state,
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .empty-state .material-symbols-outlined {
+            font-size: 48px;
+            opacity: 0.5;
+            margin-bottom: 10px;
+        }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
+            /* Evita que la tabla se estire extrañamente */
+            table-layout: fixed;
         }
 
         th,
         td {
-            padding: 12px;
+            /* Padding reducido verticalmente para que no se vean tan altas */
+            padding: 12px 16px;
             text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+            /* Centrado vertical */
+        }
+
+        /* --- CONTROL DE ANCHO DE COLUMNAS --- */
+        /* Ajusta estos porcentajes según tus necesidades */
+        th:nth-child(1) {
+            width: 12%;
+        }
+
+        /* Tipo */
+        th:nth-child(2) {
+            width: 30%;
+        }
+
+        /* Descripción (Más ancha) */
+        th:nth-child(3) {
+            width: 20%;
+        }
+
+        /* Ubicación */
+        th:nth-child(4) {
+            width: 13%;
+        }
+
+        /* Clima */
+        th:nth-child(5) {
+            width: 12%;
+        }
+
+        /* Fecha */
+        th:nth-child(6) {
+            width: 13%;
+        }
+
+        /* Estado */
+
+        th {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(4px);
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* ESTILOS DE CELDAS */
+        td {
+            font-size: 14px;
             color: var(--text-light);
         }
 
-        th {
-            background: rgba(255, 255, 255, 0.08);
+        .type-indicator {
             font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 2;
+            color: #93c5fd;
         }
 
-        tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .baja {
-            color: var(--success);
-            font-weight: bold;
-        }
-
-        .media {
-            color: var(--warning);
-            font-weight: bold;
-        }
-
-        .alta {
-            color: var(--danger);
-            font-weight: bold;
-        }
-
-        .empty {
-            margin-top: 20px;
+        .desc-cell {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             color: var(--text-muted);
-            text-align: center;
+            /* Importante para que el texto largo no rompa la tabla */
+            max-width: 0;
+        }
+
+        .location-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            /* Ubicación también puede ser larga, la cortamos si es necesario */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+
+            .tiny {
+                font-size: 18px;
+                color: var(--text-muted);
+                flex-shrink: 0;
+            }
+        }
+
+        .weather-cell {
+            .temp {
+                color: var(--text-muted);
+                margin-left: 4px;
+            }
+        }
+
+        .date-cell {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+            /* Juntar un poco fecha y hora */
+
+            .date {
+                font-weight: 500;
+                font-size: 13px;
+            }
+
+            .time {
+                color: var(--text-muted);
+                font-size: 12px;
+            }
         }
     }
+}
+
+/* ETIQUETAS */
+.tag {
+    display: inline-block;
+    padding: 5px 12px;
+    /* Un poco más grande el padding */
+    border-radius: 6px;
+    font-size: 12px;
+    /* AUMENTADO (antes 11px) */
+    font-weight: 700;
+    text-transform: uppercase;
+    color: white;
+    letter-spacing: 0.5px;
+
+    &.status-pendiente {
+        background-color: #f59e0b;
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+    }
+
+    &.status-enviado {
+        background-color: #10b981;
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+    }
+
+    &.status-resuelto,
+    &.status-atendido {
+        background-color: #3b82f6;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+    }
+}
+
+/* Scrollbar */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }

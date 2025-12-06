@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HistorialAccion } from '../../Interfaces/historial-accion.model';
 import { HistorialAcceso } from '../../Interfaces/historial-acceso.model';
-import { AuditoriaService } from '../../services/auditoria.service';
 import { AccesosService } from '../../services/accesos.service';
 
 @Component({
@@ -14,69 +12,38 @@ import { AccesosService } from '../../services/accesos.service';
   styleUrls: ['./historial-admin.component.scss'],
 })
 export class HistorialAdminComponent implements OnInit {
-  currentTab: 'auditoria' | 'accesos' = 'auditoria';
-
-  acciones: HistorialAccion[] = [];
   accesos: HistorialAcceso[] = [];
-
-  filtroAcciones = '';
   filtroAccesos = '';
-
-  loadingAcciones = false;
   loadingAccesos = false;
 
-  constructor(
-    private auditoriaSvc: AuditoriaService,
-    private accesosSvc: AccesosService
-  ) {}
+  constructor(private accesosSvc: AccesosService) {}
 
   ngOnInit(): void {
-    this.cargarAcciones();
     this.cargarAccesos();
   }
 
-  cambiarTab(t: 'auditoria' | 'accesos') {
-    this.currentTab = t;
-  }
-
-  private cargarAcciones() {
-    this.loadingAcciones = true;
-    this.auditoriaSvc.listarAcciones().subscribe({
-      next: (d) => {
-        this.acciones = d.sort(
-          (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-        );
-        this.loadingAcciones = false;
-      },
-      error: () => {
-        this.loadingAcciones = false;
-      },
-    });
-  }
-
+  //En el método cargarAccesos
   private cargarAccesos() {
     this.loadingAccesos = true;
     this.accesosSvc.listarAccesos().subscribe({
       next: (d) => {
+        //Verificar en consola qué estructura tiene 'usuario'
+        console.log('Datos recibidos del historial:', d);
+
+        //Ordenar del más reciente al más antiguo
         this.accesos = d.sort(
           (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
         );
         this.loadingAccesos = false;
       },
-      error: () => {
+      error: (e) => {
+        console.error('Error cargando historial', e);
         this.loadingAccesos = false;
       },
     });
   }
 
-  get accionesFiltradas(): HistorialAccion[] {
-    const q = this.filtroAcciones.trim().toLowerCase();
-    if (!q) return this.acciones;
-    return this.acciones.filter((a) =>
-      JSON.stringify(a).toLowerCase().includes(q)
-    );
-  }
-
+  // Filtro simple para el buscador
   get accesosFiltrados(): HistorialAcceso[] {
     const q = this.filtroAccesos.trim().toLowerCase();
     if (!q) return this.accesos;
@@ -87,11 +54,7 @@ export class HistorialAdminComponent implements OnInit {
 
   fmtFecha(iso?: string) {
     if (!iso) return '';
-    const d = new Date(iso);
-    return new Intl.DateTimeFormat('es-MX', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(d);
+    return new Date(iso).toLocaleString('es-MX');
   }
 
   exportCSV(data: any[], headers: string[], filename = 'export.csv') {
@@ -115,24 +78,6 @@ export class HistorialAdminComponent implements OnInit {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
-  }
-
-  descargarAccionesCSV() {
-    const headers = [
-      'fecha',
-      'administrador',
-      'accion',
-      'modulo',
-      'descripcion',
-    ];
-    const data = this.accionesFiltradas.map((r) => ({
-      fecha: this.fmtFecha(r.fecha),
-      administrador: r.administrador,
-      accion: r.accion,
-      modulo: r.modulo,
-      descripcion: r.descripcion,
-    }));
-    this.exportCSV(data, headers, 'auditoria.csv');
   }
 
   descargarAccesosCSV() {

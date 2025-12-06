@@ -9,7 +9,7 @@
             <h2>Gestión de Usuarios</h2>
 
             <div class="admin-list">
-                <div class="admin-card" *ngFor="let u of users">
+                <div class="admin-card" *ngFor="let u of usuarios"> 
 
                     <div class="info">
                         <div class="avatar">{{ u.nombre.charAt(0) }}</div>
@@ -30,27 +30,26 @@
             <button class="add-user" (click)="openUserModal()">+ Nuevo Usuario</button>
         </div>
 
-        <!-- Backups -->
         <div class="card">
-            <h2>Backups</h2>
+            <h2>Respaldos</h2>
 
             <button class="generate-backup-btn" (click)="generateBackup()">Generar Respaldo Manual</button>
 
             <div class="auto-backup">
                 <label>
-                    <input type="checkbox" [(ngModel)]="autoBackup.enabled"> Activar respaldos automáticos
+                    <input type="checkbox" [(ngModel)]="respaldoAutomatico.habilitado"> Activar respaldos automáticos
                 </label>
 
-                <div *ngIf="autoBackup.enabled" class="auto-options">
+                <div *ngIf="respaldoAutomatico.habilitado" class="auto-options">
                     <label>Frecuencia:
-                        <select [(ngModel)]="autoBackup.frecuencia">
+                        <select [(ngModel)]="respaldoAutomatico.frecuencia">
                             <option value="diario">Diario</option>
                             <option value="semanal">Semanal</option>
                         </select>
                     </label>
 
                     <label>Hora:
-                        <input type="time" [(ngModel)]="autoBackup.hora">
+                        <input type="time" [(ngModel)]="respaldoAutomatico.hora">
                     </label>
                 </div>
             </div>
@@ -61,7 +60,7 @@
             </label>
 
             <ul class="logs">
-                <li *ngFor="let b of backups">
+                <li *ngFor="let b of copiasDeSeguridad">
                     <strong>{{ b.fecha }}</strong> — {{ b.tamano }} ({{ b.tipo }})
                     <button class="restore" (click)="restoreBackup(b)">Restaurar</button>
                 </li>
@@ -69,17 +68,20 @@
         </div>
     </div>
 
-    <!-- MODAL -->
-    <div class="modal" *ngIf="showUserModal">
+    <div class="modal" *ngIf="mostrarModalUsuario">
         <div class="modal-content card">
-            <h2>{{ newUser ? 'Nuevo Usuario' : 'Editar Usuario' }}</h2>
+            <h2>{{ usuarioNuevo ? 'Nuevo Usuario' : 'Editar Usuario' }}</h2>
 
             <label>Nombre
-                <input type="text" [(ngModel)]="selectedUser.nombre">
+                <input type="text" [(ngModel)]="usuarioSeleccionado.nombre" placeholder="Nombre completo">
+            </label>
+
+            <label *ngIf="usuarioNuevo">Contraseña
+                <input type="password" [(ngModel)]="passwordNuevo" placeholder="Asignar contraseña">
             </label>
 
             <label>Rol
-                <select [(ngModel)]="selectedUser.rol">
+                <select [(ngModel)]="usuarioSeleccionado.rol">
                     <option>Administrador</option>
                     <option>Supervisor</option>
                     <option>Operador</option>
@@ -87,12 +89,12 @@
             </label>
 
             <label>
-                <input type="checkbox" [(ngModel)]="selectedUser.activo"> Usuario Activo
+                <input type="checkbox" [(ngModel)]="usuarioSeleccionado.activo"> Usuario Activo
             </label>
 
             <div class="modal-actions">
                 <button (click)="saveUser()">Guardar</button>
-                <button class="danger" (click)="showUserModal=false">Cancelar</button>
+                <button class="danger" (click)="mostrarModalUsuario=false">Cancelar</button>
             </div>
         </div>
     </div>

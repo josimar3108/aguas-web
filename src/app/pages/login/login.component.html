@@ -33,14 +33,14 @@
     <h2>Bienvenido a ¡Aguas!</h2>
     <h3>Aguas: Información instantánea, decisiones inteligentes.</h3>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="formularioLogin" (ngSubmit)="iniciarSesion()">
         <div class="textbox">
-            <input type="text" formControlName="username" placeholder="" />
+            <input type="text" formControlName="usuario" placeholder="" />
             <label>Usuario</label>
         </div>
 
         <div class="textbox">
-            <input type="password" formControlName="password" placeholder="" />
+            <input type="password" formControlName="contrasena" placeholder="" />
             <label>Contraseña</label>
         </div>
 
@@ -49,7 +49,7 @@
             <span class="material-symbols-outlined">arrow_forward</span>
         </button>
 
-        <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <p class="error" *ngIf="mensajeError">{{ mensajeError }}</p>
     </form>
 
     <a>¿Olvidaste tu contraseña?</a>

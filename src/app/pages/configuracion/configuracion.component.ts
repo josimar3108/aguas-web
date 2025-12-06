@@ -1,74 +1,140 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { ServicioUsuarios } from '../../services/usuarios.service';
 
 @Component({
   selector: 'app-configuracion',
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './configuracion.component.html',
   styleUrl: './configuracion.component.scss',
 })
-export class ConfiguracionComponent {
-  users = [
-    { id: 1, nombre: 'Juan Pérez', rol: 'Administrador', activo: true },
-    { id: 2, nombre: 'María López', rol: 'Supervisor', activo: true },
-    { id: 3, nombre: 'Carlos Ruiz', rol: 'Operador', activo: false },
+export class ConfiguracionComponent implements OnInit
+{
+  //Variables de gestión de usuarios
+  usuarios: any[] = []; //users
+  usuarioSeleccionado: any = null; //selectedUser
+  mostrarModalUsuario = false; //showUserModal
+  usuarioNuevo = false; //newUser
+  
+  //Variable temporal para password nuevo
+  passwordNuevo = ''; //newPassword 
+  
+  //Variables para gestión de respaldos (Backups)
+  copiasDeSeguridad: any[] = [ //backups (Ejemplo de datos para que funcione el *ngFor)
+    { id: 1, fecha: '2025-12-05 03:00', nombreArchivo: 'backup_20251205.sql' },
+    { id: 2, fecha: '2025-12-04 03:00', nombreArchivo: 'backup_20251204.sql' },
   ];
+  
+  respaldoAutomatico = { //autoBackup
+    habilitado: false, //enabled
+    frecuencia: 'diario', //frecuencia
+    hora: '03:00', //hora
+  };
 
-  selectedUser: any = null;
-  showUserModal = false;
-  newUser = false;
-
-  openUserModal(user: any = null) {
-    this.newUser = user === null;
-    this.selectedUser = user
-      ? { ...user }
-      : { nombre: '', rol: 'Operador', activo: true };
-    this.showUserModal = true;
+  constructor(private usuariosService: ServicioUsuarios)
+  {
   }
 
-  saveUser() {
-    if (this.newUser) {
-      this.users.push({ id: Date.now(), ...this.selectedUser });
-    } else {
-      const index = this.users.findIndex((u) => u.id === this.selectedUser.id);
-      this.users[index] = this.selectedUser;
+  ngOnInit()
+  {
+    this.cargarUsuarios();
+  }
+
+  cargarUsuarios()
+  {
+    this.usuariosService.obtenerUsuarios().subscribe({
+      next: (data) =>
+      {
+        this.usuarios = data; //users
+      },
+      error: (e) => console.error(e)
+    });
+  }
+
+  openUserModal(usuario: any = null) //openUserModal(user)
+  {
+    this.usuarioNuevo = usuario === null; //newUser
+    this.passwordNuevo = ''; //newPassword Resetear password field
+    
+    if (this.usuarioNuevo)
+    {
+      this.usuarioSeleccionado = { nombre: '', rol: 'Operador', activo: true }; //selectedUser
     }
-    this.showUserModal = false;
+    else
+    {
+      this.usuarioSeleccionado = { ...usuario }; //selectedUser
+    }
+    this.mostrarModalUsuario = true; //showUserModal
   }
 
-  deleteUser(id: number) {
-    this.users = this.users.filter((u) => u.id !== id);
+  saveUser()
+  {
+    if (this.usuarioNuevo)
+    {
+      //Validar que tenga password al crear
+      if (!this.passwordNuevo) {
+          alert("Debes asignar una contraseña al nuevo usuario");
+          return;
+      }
+      
+      const usuarioNuevo = { ...this.usuarioSeleccionado, password: this.passwordNuevo }; //selectedUser, newPassword
+      
+      this.usuariosService.crearUsuario(usuarioNuevo).subscribe(() =>
+      {
+        this.cargarUsuarios();
+        this.mostrarModalUsuario = false; //showUserModal
+      });
+    }
+    else
+    {
+      this.usuariosService.editarUsuario(this.usuarioSeleccionado.id, this.usuarioSeleccionado).subscribe(() => //selectedUser
+      {
+        this.cargarUsuarios();
+        this.mostrarModalUsuario = false; //showUserModal
+      });
+    }
   }
 
-  forcePasswordReset(user: any) {
-    alert(`Contraseña reseteada para ${user.nombre}`);
+  deleteUser(id: number)
+  {
+    if(confirm("¿Estás seguro de eliminar este usuario?"))
+    {
+        this.usuariosService.eliminarUsuario(id).subscribe(() =>
+        {
+          this.cargarUsuarios();
+        });
+    }
   }
 
-  // Backups
-  backups = [
-    { id: 1, fecha: '2025-11-20', tamano: '22MB', tipo: 'Automático' },
-    { id: 2, fecha: '2025-11-18', tamano: '20MB', tipo: 'Manual' },
-  ];
+  //MÉTODO AGREGADO: forcePasswordReset
+  forcePasswordReset(usuario: any): void
+  {
+    //Implementar la llamada al servicio para forzar el reinicio de la contraseña del usuario
+    console.log('Reiniciando contraseña para el usuario:', usuario.nombre);
+    alert(`Contraseña de ${usuario.nombre} ha sido reiniciada (Implementar lógica real).`);
+  }
 
-  generateBackup() {
+  generateBackup()
+  {
+    //Implementar lógica de generar respaldo
     alert('Respaldo generado correctamente.');
   }
 
-  uploadBackup(event: any) {
-    const file = event.target.files[0];
-    if (file) alert('Respaldo cargado: ' + file.name);
+  uploadBackup(event: any)
+  {
+    const archivo = event.target.files[0]; //file
+    if (archivo) alert('Respaldo cargado: ' + archivo.name);
   }
 
-  restoreBackup(backup: any) {
-    if (confirm(`¿Restaurar respaldo del ${backup.fecha}?`)) {
+  restoreBackup(copiaDeSeguridad: any) //backup
+  {
+    if (confirm(`¿Restaurar respaldo del ${copiaDeSeguridad.fecha}?`))
+    {
+      //Implementar lógica de restauración
       alert('Sistema restaurado.');
     }
   }
-
-  autoBackup = {
-    enabled: false,
-    frecuencia: 'diario',
-    hora: '03:00',
-  };
 }

@@ -1,100 +1,72 @@
 <div class="historial-container">
 
-    <h2>Historial del Sistema</h2>
+    <h2>Historial de Accesos al Sistema</h2>
 
-    <div class="tabs">
-        <button class="tab" [class.active]="currentTab==='auditoria'"
-            (click)="cambiarTab('auditoria')">Auditoría</button>
-        <button class="tab" [class.active]="currentTab==='accesos'" (click)="cambiarTab('accesos')">Accesos</button>
+    <div class="header-row">
+        <div>
+            <p class="muted">Registro de inicios de sesión en la plataforma web.</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn-csv" (click)="descargarAccesosCSV()" title="Descargar reporte">
+                <span class="material-symbols-outlined">download</span>
+            </button>
+
+            <input type="text" placeholder="Buscar usuario..." [(ngModel)]="filtroAccesos">
+        </div>
     </div>
 
-    <section class="tab-content" *ngIf="currentTab === 'auditoria'">
-        <div class="header-row">
-            <div>
-                <h3>Acciones de administradores</h3>
-                <p class="muted">Registros de creación/edición/eliminación y cambios de configuración.</p>
-            </div>
-
-            <div class="controls">
-                <input type="text" placeholder="Filtrar por admin, acción, descripción..." [(ngModel)]="filtroAcciones">
-                <button class="btn" (click)="descargarAccionesCSV()">Exportar CSV</button>
-            </div>
+    <div class="table-wrapper">
+        <div class="loading" *ngIf="loadingAccesos">
+            <p>Cargando datos del servidor...</p>
         </div>
 
-        <div class="table-wrapper">
-            <div class="loading" *ngIf="loadingAcciones">Cargando...</div>
+        <table *ngIf="!loadingAccesos">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>IP</th>
+                    <th>Navegador</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let r of accesosFiltrados">
+                    <td>{{ fmtFecha(r.fecha) }}</td>
 
-            <table *ngIf="!loadingAcciones">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Administrador</th>
-                        <th>Acción</th>
-                        <th>Módulo</th>
-                        <th>Descripción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let a of accionesFiltradas">
-                        <td>{{ fmtFecha(a.fecha) }}</td>
-                        <td>{{ a.administrador }}</td>
-                        <td>{{ a.accion }}</td>
-                        <td>{{ a.modulo }}</td>
-                        <td>{{ a.descripcion }}</td>
-                    </tr>
-                    <tr *ngIf="accionesFiltradas.length === 0">
-                        <td colspan="5" class="empty">No se encontraron registros.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+                    <td>
+                        <div class="user-info-cell">
+                            <strong>
+                                {{ $any(r.usuario)?.nombre || r.usuario || 'Desconocido' }}
+                            </strong>
 
-    <section class="tab-content" *ngIf="currentTab === 'accesos'">
-        <div class="header-row">
-            <div>
-                <h3>Historial de accesos</h3>
-                <p class="muted">IPs, navegador, intentos y resultados (exitoso / fallido / bloqueado).</p>
-            </div>
+                            <small *ngIf="$any(r.usuario)?.correo" style="display: block; color: #6b7280;">
+                                {{ $any(r.usuario).correo }}
+                            </small>
+                        </div>
+                    </td>
 
-            <div class="controls">
-                <input type="text" placeholder="Filtrar por usuario, ip, navegador..." [(ngModel)]="filtroAccesos">
-                <button class="btn" (click)="descargarAccesosCSV()">Exportar CSV</button>
-            </div>
-        </div>
+                    <td>{{ r.ip }}</td>
 
-        <div class="table-wrapper">
-            <div class="loading" *ngIf="loadingAccesos">Cargando...</div>
+                    <td class="small-text" title="{{r.navegador}}">
+                        {{ r.navegador ? r.navegador.substring(0, 40) + '...' : 'N/A' }}
+                    </td>
 
-            <table *ngIf="!loadingAccesos">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Usuario</th>
-                        <th>IP</th>
-                        <th>Navegador</th>
-                        <th>Resultado</th>
-                        <th>Intentos</th>
-                        <th>Ubicación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let r of accesosFiltrados">
-                        <td>{{ fmtFecha(r.fecha) }}</td>
-                        <td>{{ r.usuario }}</td>
-                        <td>{{ r.ip }}</td>
-                        <td>{{ r.navegador }}</td>
-                        <td><span class="badge" [class.ok]="r.resultado==='exitoso'"
-                                [class.warn]="r.resultado==='fallido'" [class.bad]="r.resultado==='bloqueado'">{{
-                                r.resultado }}</span></td>
-                        <td>{{ r.intentos }}</td>
-                        <td>{{ r.ubicacion || '-' }}</td>
-                    </tr>
-                    <tr *ngIf="accesosFiltrados.length === 0">
-                        <td colspan="7" class="empty">No se encontraron registros.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+                    <td>
+                        <span class="badge" [class.ok]="$any(r.resultado) === 'Exitoso' || $any(r.resultado) === true"
+                            [class.error]="$any(r.resultado) !== 'Exitoso' && $any(r.resultado) !== true">
+                            {{ r.resultado || 'Exitoso' }}
+                        </span>
+                    </td>
+                </tr>
+
+                <tr *ngIf="accesosFiltrados.length === 0">
+                    <td colspan="5" class="empty">
+                        No se encontraron registros que coincidan.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

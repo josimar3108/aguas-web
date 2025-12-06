@@ -1,15 +1,10 @@
 <ng-container *ngIf="showSidebar">
     <div class="sidebar-wrapper" [class.open]="isSidebarOpen">
-        <app-sidebar 
-            (sidebarToggle)="onSidebarToggle($event)" 
-            (navClick)="onNavigationClick($event)">
+        <app-sidebar (alternarSidebar)="onSidebarToggle($event)" (clicNavegacion)="onNavigationClick($event)">
         </app-sidebar>
     </div>
 </ng-container>
 
-<main 
-    [class.with-sidebar]="showSidebar" 
-    [class.sidebar-open]="isSidebarOpen && showSidebar">
+<main [class.with-sidebar]="showSidebar" [class.sidebar-open]="isSidebarOpen && showSidebar">
     <router-outlet></router-outlet>
 </main>
-

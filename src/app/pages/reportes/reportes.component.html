@@ -1,5 +1,4 @@
 <div class="reportes-wrapper">
-
     <h1 class="title">Reportes de Incidentes</h1>
 
     <div class="filters">
@@ -10,46 +9,94 @@
             <option value="Asalto">Asalto</option>
             <option value="Inundación">Inundación</option>
             <option value="Incendio">Incendio</option>
+            <option value="Manifestación">Manifestación</option>
+            <option value="Vialidad Cerrada">Vialidad Cerrada</option>
+            <option value="Fuga de Agua">Fuga de Agua</option>
+            <option value="Otro">Otro</option>
         </select>
     </div>
 
     <div class="report-list">
         <div class="report-card" *ngFor="let inc of filteredIncidents" (click)="showDetails(inc)">
-            <h2>{{ inc.type }}</h2>
 
-            <p class="desc">{{ inc.description }}</p>
+            <h2>{{ inc.type || inc.tipo }}</h2>
 
-            <small class="coords">
-                <span class="material-symbols-outlined">location_on</span> {{ inc.latitude.toFixed(4) }}, {{
-                inc.longitude.toFixed(4) }}
-            </small>
+            <p class="desc">{{ inc.description || inc.descripcion || 'Sin descripción.' }}</p>
 
-            <small class="meta">
-                <span class="material-symbols-outlined">
-                    weather_mix
-                </span> {{ inc.weather || 'Sin datos de clima' }} <br>
-                <span class="material-symbols-outlined">
-                    nest_clock_farsight_analog
-                </span> {{ inc.createdAt | date:'short' }}
-            </small>
+            <span class="coords">
+                <span class="material-symbols-outlined">location_on</span>
+                {{ inc.address || 'Ubicación desconocida' }}
+            </span>
+
+            <span class="meta">
+                <span class="material-symbols-outlined">calendar_today</span>
+                {{ inc.fecha | date:'short' }}
+            </span>
+
+            <div class="weather-info" *ngIf="(inc.weather || inc.clima) || (inc.temperature || inc.temperatura)">
+
+                <span *ngIf="inc.weather || inc.clima">
+                    <span class="material-symbols-outlined icon-mini">cloud</span>
+                    {{ inc.weather || inc.clima }}
+                </span>
+
+                <span *ngIf="inc.temperature || inc.temperatura">
+                    <span class="material-symbols-outlined icon-mini">thermostat</span>
+                    {{ inc.temperature || inc.temperatura }}°C
+                </span>
+
+            </div>
 
             <div class="tags">
-                <span class="tag severity-{{ inc.severity?.toLowerCase() }}">{{ inc.severity }}</span>
-                <span class="tag status">{{ inc.status }}</span>
+                <span class="tag status">{{ inc.status || 'PENDIENTE' }}</span>
             </div>
         </div>
+
+        <p *ngIf="filteredIncidents.length === 0 && !loading"
+            style="color: #cbd5e1; grid-column: 1/-1; text-align: center;">
+            No se encontraron reportes.
+        </p>
     </div>
 
-    <div class="details" *ngIf="selectedIncident as inc">
-        <h2>Detalle del reporte</h2>
+    <div class="modal-overlay" *ngIf="selectedIncident" (click)="closeDetails()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
 
-        <p><b>Tipo:</b> {{ inc.type }}</p>
-        <p><b>Descripción:</b> {{ inc.description }}</p>
-        <p><b>Clima:</b> {{ inc.weather || 'N/A' }}</p>
-        <p><b>Ubicación:</b> {{ inc.latitude }}, {{ inc.longitude }}</p>
-        <p><b>Fecha:</b> {{ inc.createdAt | date:'medium' }}</p>
+            <button class="close-btn" (click)="closeDetails()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
 
-        <p><b>Severidad:</b> {{ inc.severity }}</p>
-        <p><b>Status:</b> {{ inc.status }}</p>
+            <h2 class="modal-title">Detalle del Reporte</h2>
+
+            <div class="modal-body">
+                <p><strong>Tipo:</strong> {{ selectedIncident.type || selectedIncident.tipo }}</p>
+
+                <div class="info-row">
+                    <span *ngIf="selectedIncident.temperature || selectedIncident.temperatura">
+                        <span class="material-symbols-outlined icon-small">thermostat</span>
+                        {{ selectedIncident.temperature || selectedIncident.temperatura }}°C
+                    </span>
+
+                    <span *ngIf="selectedIncident.weather || selectedIncident.clima">
+                        <span class="material-symbols-outlined icon-small">cloud</span>
+                        {{ selectedIncident.weather || selectedIncident.clima }}
+                    </span>
+                </div>
+
+                <p><strong>Descripción:</strong></p>
+                <p class="desc-box">{{ selectedIncident.description || selectedIncident.descripcion }}</p>
+
+                <p><strong>Ubicación:</strong> {{ selectedIncident.address }}</p>
+                <small class="gps-text">
+                    GPS: {{ selectedIncident.latitude }}, {{ selectedIncident.longitude }}
+                </small>
+
+                <p><strong>Fecha:</strong> {{ selectedIncident.fecha | date:'medium' }}</p>
+
+                <div class="tags" style="margin-top: 15px;">
+                    <span class="tag status">{{ selectedIncident.status || 'PENDIENTE' }}</span>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>

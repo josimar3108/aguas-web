@@ -1,153 +1,78 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Incident {
-  id: number;
-  type: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  weather?: string;
-  createdAt?: Date;
-  status?: string;
-  severity?: string;
-}
+import { IncidentsService } from '../../services/incidents.service';
 
 @Component({
   selector: 'app-reportes',
   standalone: true,
-  imports: [NgFor, NgIf, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './reportes.component.html',
-  styleUrl: './reportes.component.scss',
+  styleUrls: ['./reportes.component.scss'],
 })
-export class ReportesComponent {
+export class ReportesComponent implements OnInit {
   filterType: string = '';
+  incidents: any[] = [];
+  filteredIncidents: any[] = [];
+  selectedIncident: any | null = null;
+  loading: boolean = false;
 
-  incidents: Incident[] = [
-    {
-      id: 1,
-      type: 'Accidente',
-      description: 'Colisión entre dos vehículos',
-      latitude: 21.8818,
-      longitude: -102.2916,
-      weather: 'Soleado',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'En proceso',
-    },
-    {
-      id: 2,
-      type: 'Incendio',
-      description: 'Incendio en un lote baldío',
-      latitude: 21.879,
-      longitude: -102.296,
-      weather: 'Nublado',
-      createdAt: new Date(),
-      severity: 'Media',
-      status: 'Controlado',
-    },
-    {
-      id: 3,
-      type: 'Accidente',
-      description: 'Motociclista derrapado en curva peligrosa',
-      latitude: 21.8855,
-      longitude: -102.3001,
-      weather: 'Lluvioso',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'Reportado',
-    },
-    {
-      id: 4,
-      type: 'Asalto',
-      description: 'Robo a transeúnte en vía pública',
-      latitude: 21.8701,
-      longitude: -102.2803,
-      weather: 'Soleado',
-      createdAt: new Date(),
-      severity: 'Media',
-      status: 'En proceso',
-    },
-    {
-      id: 5,
-      type: 'Asalto',
-      description: 'Intento de robo en tienda de conveniencia',
-      latitude: 21.8779,
-      longitude: -102.2847,
-      weather: 'Nublado',
-      createdAt: new Date(),
-      severity: 'Baja',
-      status: 'Resuelto',
-    },
-    {
-      id: 6,
-      type: 'Inundación',
-      description: 'Calle principal con acumulación de agua',
-      latitude: 21.8922,
-      longitude: -102.3055,
-      weather: 'Tormenta',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'En proceso',
-    },
-    {
-      id: 7,
-      type: 'Inundación',
-      description: 'Filtros de drenaje saturados',
-      latitude: 21.8633,
-      longitude: -102.2901,
-      weather: 'Lluvia ligera',
-      createdAt: new Date(),
-      severity: 'Media',
-      status: 'Controlado',
-    },
-    {
-      id: 8,
-      type: 'Incendio',
-      description: 'Fuga de gas provocando incendio pequeño',
-      latitude: 21.876,
-      longitude: -102.2999,
-      weather: 'Soleado',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'En proceso',
-    },
-    {
-      id: 9,
-      type: 'Accidente',
-      description: 'Atropellamiento leve de peatón',
-      latitude: 21.8888,
-      longitude: -102.2973,
-      weather: 'Nublado',
-      createdAt: new Date(),
-      severity: 'Baja',
-      status: 'Controlado',
-    },
-    {
-      id: 10,
-      type: 'Asalto',
-      description: 'Robo de vehículo con violencia',
-      latitude: 21.8895,
-      longitude: -102.3102,
-      weather: 'Soleado',
-      createdAt: new Date(),
-      severity: 'Alta',
-      status: 'En proceso',
-    },
-  ];
+  constructor(private incidentService: IncidentsService) {}
 
-  filteredIncidents: Incident[] = this.incidents;
-
-  selectedIncident: Incident | null = null;
-
-  applyFilter() {
-    this.filteredIncidents = this.filterType
-      ? this.incidents.filter((i) => i.type === this.filterType)
-      : this.incidents;
+  ngOnInit(): void {
+    this.cargarReportes();
   }
 
-  showDetails(incident: Incident) {
+  cargarReportes() {
+    this.loading = true;
+    this.incidentService.getAllReal().subscribe({
+      next: (data) => {
+        const safeData = data || [];
+        // Ordenar por fecha (más reciente primero)
+        this.incidents = safeData.sort((a: any, b: any) => {
+          const dateA = new Date(a.fecha || 0).getTime();
+          const dateB = new Date(b.fecha || 0).getTime();
+          return dateB - dateA;
+        });
+
+        this.filteredIncidents = [...this.incidents];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando reportes:', err);
+        this.loading = false;
+      },
+    });
+  }
+
+  applyFilter() {
+    this.closeDetails();
+
+    if (this.filterType === '') {
+      this.filteredIncidents = [...this.incidents];
+    } else {
+      this.filteredIncidents = this.incidents.filter((inc) => {
+        // Manejo seguro de mayúsculas/minúsculas y propiedades nulas
+        const tipo = inc.tipo || inc.type || '';
+        return tipo.toString().toLowerCase() === this.filterType.toLowerCase();
+      });
+    }
+  }
+
+  showDetails(incident: any) {
     this.selectedIncident = incident;
+
+    // SCROLL AUTOMÁTICO: Necesario con tu diseño actual
+    // Esperamos 100ms a que Angular renderice el div .details
+    setTimeout(() => {
+      const detailsElement = document.getElementById('detailsView');
+      if (detailsElement) {
+        detailsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  }
+
+  closeDetails() {
+    this.selectedIncident = null;
   }
 }

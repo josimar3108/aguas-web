@@ -1,90 +1,79 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
-interface NavItem {
-  item: string;
-  icon: string;
-  action?: string;
+interface ItemNavegacion
+{
+  nombre: string;
+  icono: string;
+  accion?: string;
 }
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [NgFor, CommonModule, RouterModule],
+  imports: [NgFor, CommonModule, NgIf, RouterModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
-export class SidebarComponent {
-  isOpen = false;
-  user: any = null;
+export class SidebarComponent
+{
+  estaAbierto = false;
+  usuario: any = null;
+  elementosNavegacion: ItemNavegacion[] = [];
 
-  @Output() navClick = new EventEmitter<string>();
+  @Output() clicNavegacion = new EventEmitter<string>();
+  @Output() alternarSidebar = new EventEmitter<boolean>();
+  @Output() alternar = new EventEmitter<boolean>();
 
-  @Output() sidebarToggle = new EventEmitter<boolean>();
+  constructor(public router: Router)
+  {
+    //Obtener usuario de la sesión
+    const usuarioGuardado = localStorage.getItem('usuarioSesion');
+    this.usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
 
-  @Output() toggle = new EventEmitter<boolean>();
+    //Inicializar menú
+    this.configurarMenu();
+  }
 
-constructor() {
-  const storedUser = localStorage.getItem('loggedUser');
-  this.user = storedUser ? JSON.parse(storedUser) : null;
-}
+  configurarMenu()
+  {
+    //Cargar todas las opciones directamente
+    this.elementosNavegacion = [
+      { nombre: 'Home', icono: 'home', accion: '/home' },
+      { nombre: 'Reportes', icono: 'report', accion: '/reportes' },
+      { nombre: 'Mapa', icono: 'map', accion: '/map-page' },
+      { nombre: 'Alertas', icono: 'notifications', accion: '/alertas' },
+      { nombre: 'Historial', icono: 'history', accion: '/historial-admin' },
+      { nombre: 'Estadísticas', icono: 'analytics', accion: '/estadisticas' },
+      //{ nombre: 'Comunidad', icono: 'groups', accion: '/comunidad' },
+      { nombre: 'Configuración', icono: 'settings', accion: '/configuracion' },
+      { nombre: 'Cerrar sesión', icono: 'logout', accion: 'logout' },
+    ];
+  }
 
-  navItems: NavItem[] = [
-    {
-      item: 'Home',
-      icon: 'home',
-      action: 'home',
-    },
-    {
-      item: 'Reportes',
-      icon: 'report',
-      action: 'reportes',
-    },
-    {
-      item: 'Mapa',
-      icon: 'map',
-      action: 'mapa',
-    },
-    {
-      item: 'Alertas',
-      icon: 'notifications',
-      action: 'alertas',
-    },
-    {
-      item: 'Historial',
-      icon: 'history',
-      action: 'historial-admin',
-    },
-    {
-      item: 'Estadísticas',
-      icon: 'analytics',
-      action: 'estadisticas',
-    },
-    {
-      item: 'Comunidad',
-      icon: 'groups',
-      action: 'comunidad',
-    },
-    {
-      item: 'Configuración',
-      icon: 'settings',
-      action: 'configuracion',
-    },
-    {
-      item: 'Cerrar sesión',
-      icon: 'logout',
-      action: 'logout',
-    },
-  ];
+  alternarBarraLateral(): void
+  {
+    this.estaAbierto = !this.estaAbierto;
+    this.alternarSidebar.emit(this.estaAbierto);
+  }
 
-  toggleSidebar(): void {
-  this.isOpen = !this.isOpen;
-  this.sidebarToggle.emit(this.isOpen);
-}
+  alHacerClicItem(accion: string)
+  {
+    console.log('Navegación:', accion);
 
-  onNavItemClick(action: string) {
-    console.log('Nav click:', action); 
-    this.navClick.emit(action);
+    if(accion === 'logout')
+    {
+      //Cerrar sesión y redirigir
+      localStorage.removeItem('usuarioSesion');
+      this.router.navigate(['/login']);
+    }
+    else
+    {
+      //Navegar a la ruta seleccionada
+      this.router.navigate([accion]);
+    }
+
+    this.clicNavegacion.emit(accion);
   }
 }

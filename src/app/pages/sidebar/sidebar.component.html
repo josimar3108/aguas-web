@@ -1,9 +1,9 @@
-<aside [class.open]="isOpen" class="sidebar">
+<aside [class.open]="estaAbierto" class="sidebar">
     <div class="inner">
         <header>
-            <button type="button" (click)="toggleSidebar()">
+            <button type="button" (click)="alternarBarraLateral()">
                 <span class="material-symbols-outlined">
-                    {{ isOpen ? 'close' : 'menu' }}
+                    {{ estaAbierto ? 'close' : 'menu' }}
                 </span>
             </button>
             <div class="logo-container">
@@ -12,18 +12,21 @@
         </header>
 
         <nav>
-            <button type="button" *ngFor="let navItem of navItems" (click)="onNavItemClick(navItem.action || '')">
-                <span class="material-symbols-outlined">{{ navItem.icon }}</span>
-                <p>{{ navItem.item }}</p>
+            <button type="button" *ngFor="let item of elementosNavegacion" (click)="alHacerClicItem(item.accion || '')"
+                [class.active]="router.url === item.accion">
+                <span class="material-symbols-outlined">{{ item.icono }}</span>
+                <p>{{ item.nombre }}</p>
             </button>
         </nav>
 
-        <div class="user-info">
-            <img [src]="user?.avatar || 'assets/user.png'" class="avatar" />
+        <div class="user-info" *ngIf="usuario">
+            <img [src]="usuario.urlFoto || 'https://ui-avatars.com/api/?name=' + usuario.nombre + '&background=random'"
+                class="avatar" alt="Perfil" />
 
-            <div class="details" *ngIf="isOpen">
-                <p class="name">{{ user?.name }}</p>
-                <p class="email">{{ user?.email }}</p>
+            <div class="detalles" *ngIf="estaAbierto">
+                <p class="nombre">{{ usuario.nombre }}</p>
+                <p class="rol">Administrador</p>
+                <p class="correo" title="{{ usuario.correo }}">{{ usuario.correo }}</p>
             </div>
         </div>
     </div>

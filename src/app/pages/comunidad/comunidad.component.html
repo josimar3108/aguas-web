@@ -4,70 +4,82 @@
         <p class="subtitle">Presencia y comunicaciones internas — sólo para admins.</p>
     </header>
 
-    <main class="grid">
-        <section class="actividad card">
-            <h2>Actividad y Presencia</h2>
-            <div class="admin-list">
-                <article class="admin-card" *ngFor="let admin of admins">
-                    <div class="left">
-                        <div class="avatar">{{ admin.nombre.charAt(0) }}</div>
-                        <div class="meta">
-                            <h3>{{ admin.nombre }}</h3>
-                            <small class="rol">{{ admin.rol }}</small>
+    <div *ngIf="loading" class="loading-state">
+        Cargando datos de la comunidad...
+    </div>
+
+    <div *ngIf="!loading">
+
+        <main class="grid">
+            <section class="actividad card">
+                <h2>Actividad y Presencia</h2>
+                <div class="admin-list">
+                    <article class="admin-card" *ngFor="let admin of admins">
+                        <div class="left">
+                            <div class="avatar">{{ admin.nombre.charAt(0) }}</div>
+                            <div class="meta">
+                                <h3>{{ admin.nombre }}</h3>
+                                <small class="rol">{{ admin.rol }}</small>
+                            </div>
+                        </div>
+
+                        <div class="right">
+                            <div class="status" [class.online]="admin.conectado"
+                                [title]="admin.conectado ? 'En línea' : 'Desconectado'"></div>
+                            <p><strong>Acción:</strong> {{ admin.ultimaAccion }}</p>
+                            <p><strong>Tiempo:</strong> {{ admin.tiempoActivo }}</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="acciones card">
+                <h2>Logs Recientes</h2>
+                <ul class="logs">
+                    <li *ngFor="let a of admins">
+                        <strong>{{ a.nombre }}</strong>: {{ a.ultimaAccion }}
+                        <small>{{ a.tiempoActivo }} atrás</small>
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <section class="foro card">
+            <h2>Foro Interno</h2>
+
+            <div class="nuevo-post">
+                <input type="text" placeholder="Título del anuncio..." [(ngModel)]="nuevoPost.titulo" />
+                <textarea rows="2" placeholder="Escribe un mensaje para el equipo..."
+                    [(ngModel)]="nuevoPost.contenido"></textarea>
+                <div class="acciones-row">
+                    <button (click)="crearPost()">Publicar Anuncio</button>
+                </div>
+            </div>
+
+            <div class="posts">
+                <article class="post" *ngFor="let p of posts">
+                    <div class="post-head">
+                        <h3>{{ p.titulo }}</h3>
+                        <small>{{ p.autor }} · {{ p.fecha }}</small>
+                    </div>
+
+                    <p class="post-body">{{ p.contenido }}</p>
+
+                    <div class="respuestas">
+                        <div class="respuesta" *ngFor="let r of p.respuestas">
+                            <strong>{{ r.autor }}:</strong> {{ r.contenido }}
+                            <span class="fecha">{{ r.fecha }}</span>
                         </div>
                     </div>
 
-                    <div class="right">
-                        <div class="status" [class.online]="admin.conectado"
-                            [title]="admin.conectado ? 'En línea' : 'Desconectado'"></div>
-                        <p class="accion"><strong>Última acción:</strong> {{ admin.ultimaAccion }}</p>
-                        <p class="tiempo"><strong>Tiempo activo:</strong> {{ admin.tiempoActivo }}</p>
+                    <div class="reply">
+                        <input #respInput type="text" placeholder="Escribe una respuesta..."
+                            (keyup.enter)="responder(p, respInput.value); respInput.value = ''" />
+                        <button (click)="responder(p, respInput.value); respInput.value = ''">Responder</button>
                     </div>
                 </article>
             </div>
         </section>
 
-        <section class="acciones card">
-            <h2>Acciones recientes</h2>
-            <ul class="logs">
-                <li *ngFor="let a of admins">
-                    <strong>{{ a.nombre }}</strong> — {{ a.ultimaAccion }} <small>· {{ a.tiempoActivo }}</small>
-                </li>
-            </ul>
-        </section>
-    </main>
-
-    <section class="foro card">
-        <h2>Foro interno</h2>
-
-        <div class="nuevo-post">
-            <input type="text" placeholder="Título" [(ngModel)]="nuevoPost.titulo" />
-            <textarea rows="3" placeholder="Contenido" [(ngModel)]="nuevoPost.contenido"></textarea>
-            <div class="acciones-row">
-                <button (click)="crearPost()">Publicar</button>
-            </div>
-        </div>
-
-        <div class="posts">
-            <article class="post" *ngFor="let p of posts">
-                <div class="post-head">
-                    <h3>{{ p.titulo }}</h3>
-                    <small>Por {{ p.autor }} · {{ p.fecha }}</small>
-                </div>
-
-                <p class="post-body">{{ p.contenido }}</p>
-
-                <div class="respuestas">
-                    <div class="respuesta" *ngFor="let r of p.respuestas">
-                        <strong>{{ r.autor }}</strong> — {{ r.contenido }} <small class="fecha">{{ r.fecha }}</small>
-                    </div>
-                </div>
-
-                <div class="reply">
-                    <input #respInput type="text" placeholder="Responder..." />
-                    <button (click)="responder(p, respInput.value); respInput.value = ''">Enviar</button>
-                </div>
-            </article>
-        </div>
-    </section>
+    </div>
 </div>
