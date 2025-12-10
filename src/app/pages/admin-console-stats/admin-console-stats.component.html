@@ -20,22 +20,12 @@
     </div>
 
     <div class="panel">
-        <h2>Estado de Servicios</h2>
-        <div class="services">
-            <div class="service" *ngFor="let s of systemStatus">
-                <span>{{ s.name }}</span>
-                <span class="dot" [class.ok]="s.status" [class.fail]="!s.status"></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="panel">
         <h2>Seguridad</h2>
         <div class="security">
             <p>Intentos fallidos: <strong>{{ securityStats.failedAttempts }}</strong></p>
             <p>Intentos exitosos: <strong>{{ securityStats.successfulAttempts }}</strong></p>
             <p>Último acceso admin: <strong>{{ securityStats.lastAdminAccess }}</strong></p>
-            <p>Usuarios activos ahora: <strong>{{ securityStats.activeUsers }}</strong></p>
+            <p>Usuarios activos: <strong>{{ securityStats.activeUsers }}</strong></p>
         </div>
     </div>
 </div>

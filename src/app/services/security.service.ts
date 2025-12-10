@@ -5,15 +5,12 @@ import * as CryptoJS from 'crypto-js';
   providedIn: 'root'
 })
 export class SecurityService {
-  // LA MISMA CLAVE QUE EN ANDROID
   private readonly SECRET_KEY = 'AguasMovilSeguro';
 
   constructor() { }
 
   decrypt(ciphertext: string): string {
     try {
-      // 1. LIMPIEZA: Quitamos espacios en blanco y saltos de línea (\n, \r)
-      // Esto es vital porque Android con Base64.DEFAULT los agrega.
       const cleanCiphertext = ciphertext.replace(/\s/g, ''); 
 
       const key = CryptoJS.enc.Utf8.parse(this.SECRET_KEY);

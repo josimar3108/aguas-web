@@ -17,7 +17,6 @@ export class AccesosService {
     return this.http.get<HistorialAcceso[]>(this.apiUrlGet);
   }
 
-  // IMPORTANTE: responseType: 'text' para evitar error de parsing
   registrarNuevoAcceso(datos: any): Observable<any> {
     return this.http.post(this.apiUrlPost, datos, { responseType: 'text' });
   }

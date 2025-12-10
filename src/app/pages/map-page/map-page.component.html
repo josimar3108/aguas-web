@@ -1,6 +1,14 @@
 <div class="page-wrapper is-full-page">
   <div class="map-container relative-container">
 
+    <div class="search-bar">
+      <input type="text" placeholder="Buscar calle, colonia, lugar..." [(ngModel)]="textoBusqueda"
+        (keyup.enter)="buscarLugar()" />
+      <button (click)="buscarLugar()">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+    </div>
+
     <div class="map-frame">
       <div class="map-inner">
         <google-map [height]="'100%'" [width]="'100%'" [center]="center" [zoom]="zoom">

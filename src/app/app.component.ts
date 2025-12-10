@@ -28,48 +28,20 @@ export class AppComponent {
     });
   }
 
-  onNavigationClick(action: string) {
-    switch (action) {
-      case 'home':
-        this.router.navigate(['/home']);
-        break;
+  onNavigationClick(accion: string) {
+    if (accion.startsWith('/')) {
+      return; 
+    }
 
-      case 'mapa':
-        this.router.navigate(['/map-page']);
-        break;
-
-      case 'reportes':
-        this.router.navigate(['/reportes']);
-        break;
-
-      case 'alertas':
-        this.router.navigate(['/alertas']);
-        break;
-
-      case 'historial-admin':
-        this.router.navigate(['/historial-admin']);
-        break;
-
-      case 'estadisticas':
-        this.router.navigate(['/estadisticas']);
-        break;
-
-      case 'comunidad':
-        this.router.navigate(['/comunidad']);
-        break;
-
-      case 'configuracion':
-        this.router.navigate(['/configuracion']);
-        break;
-
+    switch (accion) {
       case 'logout':
-        localStorage.removeItem('loggedUser');
+        localStorage.removeItem('usuarioSesion'); 
         sessionStorage.clear();
         this.router.navigate(['/login']);
         break;
 
       default:
-        console.warn('Acción no reconocida:', action);
+        console.warn('Acción no reconocida o ya manejada:', accion);
     }
   }
 

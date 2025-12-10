@@ -28,17 +28,13 @@ export class SidebarComponent
 
   constructor(public router: Router)
   {
-    //Obtener usuario de la sesión
     const usuarioGuardado = localStorage.getItem('usuarioSesion');
     this.usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
-
-    //Inicializar menú
     this.configurarMenu();
   }
 
   configurarMenu()
   {
-    //Cargar todas las opciones directamente
     this.elementosNavegacion = [
       { nombre: 'Home', icono: 'home', accion: '/home' },
       { nombre: 'Reportes', icono: 'report', accion: '/reportes' },
@@ -48,6 +44,7 @@ export class SidebarComponent
       { nombre: 'Estadísticas', icono: 'analytics', accion: '/estadisticas' },
       //{ nombre: 'Comunidad', icono: 'groups', accion: '/comunidad' },
       { nombre: 'Configuración', icono: 'settings', accion: '/configuracion' },
+      { nombre: 'Créditos', icono: 'groups', accion: '/creditos' },
       { nombre: 'Cerrar sesión', icono: 'logout', accion: 'logout' },
     ];
   }
@@ -64,13 +61,11 @@ export class SidebarComponent
 
     if(accion === 'logout')
     {
-      //Cerrar sesión y redirigir
       localStorage.removeItem('usuarioSesion');
       this.router.navigate(['/login']);
     }
     else
     {
-      //Navegar a la ruta seleccionada
       this.router.navigate([accion]);
     }
 

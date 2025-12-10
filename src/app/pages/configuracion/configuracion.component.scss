@@ -13,7 +13,6 @@
     background: var(--bg-main);
 }
 
-/* ---------------- HEADER ---------------- */
 .header {
     margin-bottom: 18px;
 
@@ -31,7 +30,6 @@
     }
 }
 
-/* ---------------- GRID ---------------- */
 .grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -58,7 +56,6 @@
     }
 }
 
-/* ---------------- LISTA USUARIOS ---------------- */
 .admin-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -95,7 +92,6 @@
     }
 }
 
-/* ---------------- ACCIONES USUARIO ---------------- */
 .acciones {
     display: flex;
     flex-direction: column;
@@ -143,7 +139,6 @@ button:not(.danger):not(.warning) {
     }
 }
 
-/* ---------------- BOTÓN NUEVO USUARIO ---------------- */
 .add-user {
     margin-top: 16px;
     background: var(--success);
@@ -155,7 +150,6 @@ button:not(.danger):not(.warning) {
     font-weight: 600;
 }
 
-/* ---------------- BACKUPS ---------------- */
 .generate-backup-btn {
     background: var(--primary);
     padding: 10px 14px;
@@ -205,7 +199,6 @@ button:not(.danger):not(.warning) {
     }
 }
 
-/* ---------------- MODAL ---------------- */
 .modal {
     position: fixed;
     top: 0;
@@ -266,7 +259,6 @@ button:not(.danger):not(.warning) {
     }
 }
 
-/* ---------------- RESPONSIVE ---------------- */
 @media (max-width: 900px) {
     .grid {
         grid-template-columns: 1fr;

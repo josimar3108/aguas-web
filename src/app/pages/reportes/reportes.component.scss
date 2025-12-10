@@ -1,4 +1,3 @@
-/* BLOQUE 1: Contenedor y Lista (Todo lo que está "debajo") */
 .reportes-wrapper {
     flex-grow: 1;
     width: 100%;
@@ -13,7 +12,6 @@
         margin-bottom: 20px;
     }
 
-    /* FILTROS */
     .filters {
         display: flex;
         align-items: center;
@@ -33,7 +31,6 @@
         }
     }
 
-    /* TARJETAS */
     .report-list {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -113,25 +110,18 @@
     }
 }
 
-/* <--- AQUÍ TERMINA .reportes-wrapper */
-
-
-/* BLOQUE 2: Modal Flotante (FUERA del wrapper para asegurar position: fixed) */
 .modal-overlay {
     position: fixed;
-    /* Esto es lo que lo hace flotar */
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.7);
-    /* Un poco más oscuro */
     backdrop-filter: blur(4px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    /* Prioridad máxima */
     animation: fadeIn 0.2s ease-out;
 }
 
@@ -224,7 +214,6 @@
     }
 }
 
-/* Iconos y Animaciones Globales */
 .material-symbols-outlined {
     font-size: 18px;
     vertical-align: middle;

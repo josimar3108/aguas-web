@@ -8,6 +8,7 @@ import { HistorialAdminComponent } from './pages/historial-admin/historial-admin
 import { AdminConsoleStatsComponent } from './pages/admin-console-stats/admin-console-stats.component';
 import { ComunidadComponent } from './pages/comunidad/comunidad.component';
 import { ConfiguracionComponent } from './pages/configuracion/configuracion.component';
+import { CreditosComponent } from './pages/creditos/creditos.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -20,6 +21,6 @@ export const routes: Routes = [
     { path: 'estadisticas', component: AdminConsoleStatsComponent},
     { path: 'comunidad', component: ComunidadComponent},
     { path: 'configuracion', component: ConfiguracionComponent},
+    { path: 'creditos', component: CreditosComponent },
     { path: '**', redirectTo: 'login' }
-
 ];

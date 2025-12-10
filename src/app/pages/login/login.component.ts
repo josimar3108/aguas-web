@@ -17,8 +17,7 @@ import { AccesosService } from '../../services/accesos.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent
-{
+export class LoginComponent {
   formularioLogin: FormGroup;
   mensajeError: string = '';
 
@@ -27,19 +26,15 @@ export class LoginComponent
     private servicioUsuarios: ServicioUsuarios,
     private servicioAccesos: AccesosService,
     private constructorFormulario: FormBuilder
-  )
-  {
-    //Inicializar el formulario
+  ) {
     this.formularioLogin = this.constructorFormulario.group({
       usuario: ['', Validators.required],
       contrasena: ['', Validators.required],
     });
   }
 
-  iniciarSesion()
-  {
-    if(this.formularioLogin.invalid)
-    {
+  iniciarSesion() {
+    if (this.formularioLogin.invalid) {
       this.mensajeError = 'Por favor completa todos los campos.';
       return;
     }
@@ -47,76 +42,70 @@ export class LoginComponent
     const { usuario, contrasena } = this.formularioLogin.value;
 
     this.servicioUsuarios.obtenerUsuarios().subscribe(
-      (listaUsuarios: any[]) =>
-      {
-        //Depurar datos recibidos
-        console.log('Datos recibidos del servidor:', listaUsuarios);
+      (listaUsuarios: any[]) => {
+        console.log('Usuarios obtenidos:', listaUsuarios);
 
-        //Buscar usuario (Validar nombres de propiedades comunes en español e inglés)
-        const usuarioEncontrado = listaUsuarios.find(
-          (u) =>
-          {
-            const nombreUsuario = u.usuario || u.username || u.nombre;
-            const correoUsuario = u.correo || u.email;
-            return nombreUsuario === usuario || correoUsuario === usuario;
-          }
-        );
+        const usuarioEncontrado = listaUsuarios.find((u) => {
+          const nombreUsuario = u.usuario || u.username || u.nombre;
+          const correoUsuario = u.correo || u.email;
+          return nombreUsuario === usuario || correoUsuario === usuario;
+        });
 
-        if(usuarioEncontrado)
-        {
-          //Obtener rol y contraseña manejando posibles nombres de variables
+        if (usuarioEncontrado) {
           const rol = usuarioEncontrado.rol || usuarioEncontrado.role || '';
-          const passReal = usuarioEncontrado.password || usuarioEncontrado.contrasena || '';
+          const passReal =
+            usuarioEncontrado.password || usuarioEncontrado.contrasena || '';
 
-          //Validar si es administrador
-          if(rol.toLowerCase() === 'administrador' || rol.toLowerCase() === 'admin')
-          {
-            //Validar contraseña
-            if(String(passReal) === String(contrasena))
-            {
-              //Registrar acceso
-              const nuevoAcceso = {
-                fecha: new Date().toISOString(),
-                usuario: usuarioEncontrado.correo || usuarioEncontrado.email,
-                ip: 'Web Admin',
-                navegador: navigator.userAgent,
-                resultado: 'exitoso',
-                intentos: 1,
-                ubicacion: 'México',
-              };
+          const idUsuarioLog =
+            usuarioEncontrado.correo || usuarioEncontrado.email || usuario;
 
-              this.servicioAccesos.registrarNuevoAcceso(nuevoAcceso).subscribe({
-                next: () => console.log('Acceso registrado'),
-                error: (err) => console.error('Error al registrar acceso', err),
-              });
+          if (
+            rol.toLowerCase() === 'administrador' ||
+            rol.toLowerCase() === 'admin'
+          ) {
+            if (String(passReal) === String(contrasena)) {
+              this.registrarIntento(idUsuarioLog, 'exitoso');
 
               localStorage.setItem(
                 'usuarioSesion',
                 JSON.stringify(usuarioEncontrado)
               );
-              
+
               this.enrutador.navigate(['/home']);
-            }
-            else
-            {
+            } else {
               this.mensajeError = 'Contraseña incorrecta.';
+              this.registrarIntento(idUsuarioLog, 'fallido (pass)');
             }
-          }
-          else
-          {
+          } else {
             this.mensajeError = 'Acceso denegado: Solo administradores.';
+            this.registrarIntento(idUsuarioLog, 'fallido (rol)');
           }
-        }
-        else
-        {
+        } else {
           this.mensajeError = 'Usuario no encontrado.';
+          this.registrarIntento(usuario, 'fallido (no existe)');
         }
       },
-      (error) =>
-      {
+      (error) => {
         console.error(error);
         this.mensajeError = 'Error de conexión con el servidor.';
       }
     );
+  }
+
+  private registrarIntento(usuario: string, resultado: string) {
+    const nuevoAcceso = {
+      fecha: new Date().toISOString(),
+      usuario: usuario,
+      ip: 'Web Admin', 
+      navegador: navigator.userAgent,
+      resultado: resultado,
+      intentos: 1,
+      ubicacion: 'México',
+    };
+
+    this.servicioAccesos.registrarNuevoAcceso(nuevoAcceso).subscribe({
+      next: () => console.log(`Intento registrado: ${resultado}`),
+      error: (err) => console.error('Error al registrar acceso', err),
+    });
   }
 }

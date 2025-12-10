@@ -1,0 +1,34 @@
+<div class="creditos-wrapper">
+    <div class="header">
+        <h1>Equipo de Desarrollo</h1>
+        <p class="subtitle">Proyecto Final: ¡Aguas! - Sistema Distribuido de Reportes</p>
+    </div>
+
+    <div class="grid-equipo">
+        <div class="card-integrante" *ngFor="let miembro of equipo">
+
+            <div class="avatar">
+                {{ miembro.nombre.charAt(0) }}
+            </div>
+
+            <h2 class="nombre">{{ miembro.nombre }}</h2>
+            <span class="id-alumno">ID: {{ miembro.id }}</span>
+
+            <div class="divider"></div>
+
+            <div class="info-detalles">
+                <p class="depto">{{ miembro.departamento }}</p>
+                <p class="uni">{{ miembro.universidad }}</p>
+                <p class="ubicacion">
+                    <span class="material-symbols-outlined icon-tiny">location_on</span>
+                    {{ miembro.ubicacion }}
+                </p>
+            </div>
+
+            <a [href]="'mailto:' + miembro.correo" class="btn-contacto">
+                <span class="material-symbols-outlined">mail</span>
+                {{ miembro.correo }}
+            </a>
+        </div>
+    </div>
+</div>

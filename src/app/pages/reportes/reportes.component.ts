@@ -28,7 +28,6 @@ export class ReportesComponent implements OnInit {
     this.incidentService.getAllReal().subscribe({
       next: (data) => {
         const safeData = data || [];
-        // Ordenar por fecha (más reciente primero)
         this.incidents = safeData.sort((a: any, b: any) => {
           const dateA = new Date(a.fecha || 0).getTime();
           const dateB = new Date(b.fecha || 0).getTime();
@@ -52,7 +51,6 @@ export class ReportesComponent implements OnInit {
       this.filteredIncidents = [...this.incidents];
     } else {
       this.filteredIncidents = this.incidents.filter((inc) => {
-        // Manejo seguro de mayúsculas/minúsculas y propiedades nulas
         const tipo = inc.tipo || inc.type || '';
         return tipo.toString().toLowerCase() === this.filterType.toLowerCase();
       });
@@ -62,8 +60,6 @@ export class ReportesComponent implements OnInit {
   showDetails(incident: any) {
     this.selectedIncident = incident;
 
-    // SCROLL AUTOMÁTICO: Necesario con tu diseño actual
-    // Esperamos 100ms a que Angular renderice el div .details
     setTimeout(() => {
       const detailsElement = document.getElementById('detailsView');
       if (detailsElement) {

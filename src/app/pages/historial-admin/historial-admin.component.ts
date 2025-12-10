@@ -22,15 +22,12 @@ export class HistorialAdminComponent implements OnInit {
     this.cargarAccesos();
   }
 
-  //En el método cargarAccesos
   private cargarAccesos() {
     this.loadingAccesos = true;
     this.accesosSvc.listarAccesos().subscribe({
       next: (d) => {
-        //Verificar en consola qué estructura tiene 'usuario'
         console.log('Datos recibidos del historial:', d);
 
-        //Ordenar del más reciente al más antiguo
         this.accesos = d.sort(
           (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
         );
@@ -43,7 +40,6 @@ export class HistorialAdminComponent implements OnInit {
     });
   }
 
-  // Filtro simple para el buscador
   get accesosFiltrados(): HistorialAcceso[] {
     const q = this.filtroAccesos.trim().toLowerCase();
     if (!q) return this.accesos;

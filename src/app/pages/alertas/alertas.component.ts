@@ -17,7 +17,6 @@ export class AlertasComponent implements OnInit {
   filtered: Incident[] = [];
   loading: boolean = true;
 
-  // Filtros
   filterType: string = '';
   searchText: string = '';
 
@@ -32,7 +31,6 @@ export class AlertasComponent implements OnInit {
     
     this.incidentService.getAllReal().subscribe({
       next: (data) => {
-        // Ordenar por fecha descendente (lo más nuevo primero)
         this.incidents = data.sort((a: any, b: any) => {
           const fechaA = new Date(a.fecha || 0).getTime();
           const fechaB = new Date(b.fecha || 0).getTime();
@@ -53,10 +51,8 @@ export class AlertasComponent implements OnInit {
     const texto = this.searchText.toLowerCase().trim();
 
     this.filtered = this.incidents.filter(incident => {
-      // 1. Filtro por Tipo
       const matchType = !this.filterType || incident.type === this.filterType;
-      
-      // 2. Filtro por Texto (busca en descripción, dirección o tipo)
+
       const descripcion = incident.description ? incident.description.toLowerCase() : '';
       const direccion = incident.address ? incident.address.toLowerCase() : '';
       const tipo = incident.type ? incident.type.toLowerCase() : '';

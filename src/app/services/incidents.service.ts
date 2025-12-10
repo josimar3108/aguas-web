@@ -22,11 +22,7 @@ export class IncidentsService {
 
         encryptedList.forEach(encryptedString => {
           try {
-            // --- CORRECCIÓN AQUÍ ---
-            // Limpiamos la cadena quitando saltos de línea (\n) y espacios que mete Android
             const cleanString = encryptedString.replace(/\s/g, ''); 
-            // -----------------------
-
             const bytes = CryptoJS.AES.decrypt(cleanString, CryptoJS.enc.Utf8.parse(this.CLAVE_SECRETA), {
               mode: CryptoJS.mode.ECB,
               padding: CryptoJS.pad.Pkcs7
@@ -55,7 +51,6 @@ export class IncidentsService {
             }
           } catch (e) {
             console.error('Error procesando un paquete de datos:', e);
-            // Si falla uno, no rompemos todo el ciclo, solo lo ignoramos
           }
         });
 

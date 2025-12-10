@@ -1,8 +1,3 @@
-/* VARIABLES DE REFERENCIA
-   --bg-main, --card-bg, --text-light, --text-muted, --card-border,
-   --input-bg, --input-focus, --danger, --success, --warning, --primary
-*/
-
 .alertas-container {
     display: flex;
     flex-direction: column;
@@ -13,7 +8,6 @@
     box-sizing: border-box;
     color: var(--text-light);
 
-    /* CABECERA */
     .header-section {
         display: flex;
         justify-content: space-between;
@@ -28,7 +22,6 @@
         }
     }
 
-    /* SECCIÓN DE FILTROS */
     .filters {
         display: flex;
         flex-wrap: wrap;
@@ -40,7 +33,6 @@
             display: flex;
             flex-direction: column;
             min-width: 160px;
-            /* Reducido un poco */
 
             label {
                 font-size: 14px;
@@ -52,7 +44,6 @@
             select {
                 padding: 0 10px;
                 height: 38px;
-                /* ALTURA REDUCIDA (antes 42px) */
                 border-radius: 8px;
                 border: 1px solid var(--card-border);
                 background: var(--input-bg);
@@ -67,18 +58,15 @@
             }
         }
 
-        /* BUSCADOR AJUSTADO */
         .search-box {
             flex: 1;
             min-width: 200px;
             max-width: 320px;
-            /* <--- LÍMITE DE ANCHO PARA QUE NO SEA GIGANTE */
 
             .input-wrapper {
                 display: flex;
                 align-items: center;
                 height: 38px;
-                /* ALTURA REDUCIDA para coincidir con el select */
                 background: var(--input-bg);
                 border: 1px solid var(--card-border);
                 border-radius: 8px;
@@ -93,7 +81,6 @@
                 .icon {
                     color: var(--text-muted);
                     font-size: 18px;
-                    /* Icono un poco más sutil */
                     margin-right: 8px;
                 }
 
@@ -134,8 +121,6 @@
         }
     }
 
-    /* TABLA Y CONTENEDOR */
-    /* TABLA Y CONTENEDOR */
     .table-wrapper {
         flex: 1 1 auto;
         min-height: 0;
@@ -146,7 +131,6 @@
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         position: relative;
 
-        /* Mensajes de carga y vacío */
         .loading-state,
         .empty-state {
             padding: 40px;
@@ -164,52 +148,40 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            /* Evita que la tabla se estire extrañamente */
             table-layout: fixed;
         }
 
         th,
         td {
-            /* Padding reducido verticalmente para que no se vean tan altas */
             padding: 12px 16px;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             vertical-align: middle;
-            /* Centrado vertical */
         }
 
-        /* --- CONTROL DE ANCHO DE COLUMNAS --- */
-        /* Ajusta estos porcentajes según tus necesidades */
         th:nth-child(1) {
             width: 12%;
         }
 
-        /* Tipo */
         th:nth-child(2) {
             width: 30%;
         }
 
-        /* Descripción (Más ancha) */
         th:nth-child(3) {
             width: 20%;
         }
 
-        /* Ubicación */
         th:nth-child(4) {
             width: 13%;
         }
 
-        /* Clima */
         th:nth-child(5) {
             width: 12%;
         }
 
-        /* Fecha */
         th:nth-child(6) {
             width: 13%;
         }
-
-        /* Estado */
 
         th {
             background: rgba(30, 41, 59, 0.95);
@@ -228,7 +200,6 @@
             background: rgba(255, 255, 255, 0.02);
         }
 
-        /* ESTILOS DE CELDAS */
         td {
             font-size: 14px;
             color: var(--text-light);
@@ -244,7 +215,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
             color: var(--text-muted);
-            /* Importante para que el texto largo no rompa la tabla */
             max-width: 0;
         }
 
@@ -252,8 +222,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-
-            /* Ubicación también puede ser larga, la cortamos si es necesario */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -277,7 +245,6 @@
             display: flex;
             flex-direction: column;
             line-height: 1.2;
-            /* Juntar un poco fecha y hora */
 
             .date {
                 font-weight: 500;
@@ -292,14 +259,11 @@
     }
 }
 
-/* ETIQUETAS */
 .tag {
     display: inline-block;
     padding: 5px 12px;
-    /* Un poco más grande el padding */
     border-radius: 6px;
     font-size: 12px;
-    /* AUMENTADO (antes 11px) */
     font-weight: 700;
     text-transform: uppercase;
     color: white;
@@ -322,7 +286,6 @@
     }
 }
 
-/* Scrollbar */
 .table-wrapper::-webkit-scrollbar {
     width: 8px;
     height: 8px;

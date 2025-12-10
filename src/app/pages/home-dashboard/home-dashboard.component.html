@@ -78,13 +78,24 @@
                 </thead>
 
                 <tbody>
-                    <tr *ngFor="let report of pendingReports">
+                    <tr *ngFor="let report of pendingReports" (click)="locateIncident(report.id)"
+                        style="cursor: pointer; transition: background 0.2s;" title="Clic para ver en el mapa">
+
                         <td>#{{ report.id }}</td>
-                        <td>{{ report.type }}</td>
+                        <td>
+                            <span [ngStyle]="{'color': 
+                report.type.includes('Incendio') ? '#ef4444' : 
+                report.type.includes('Inundación') ? '#06b6d4' : '#e2e8f0'}">
+                                ●
+                            </span>
+                            {{ report.type }}
+                        </td>
                         <td>{{ report.location }}</td>
                         <td>{{ report.timeReported }}</td>
                         <td>
-                            <button class="action-btn" (click)="assignReport(report.id)">Asignar</button>
+                            <button class="action-btn" (click)="$event.stopPropagation(); assignReport(report.id)">
+                                Asignar
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -108,9 +119,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
-
 </div>

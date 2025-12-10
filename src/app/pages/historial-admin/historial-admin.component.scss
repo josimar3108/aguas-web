@@ -31,7 +31,7 @@ h2 {
         backdrop-filter: blur(22px);
 
         &:hover {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
         }
     }
 
@@ -65,32 +65,57 @@ h2 {
     .controls {
         display: flex;
         gap: 10px;
+        align-items: center;
+
+        .btn-csv {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+            .material-symbols-outlined {
+                font-size: 22px;
+            }
+
+            &:hover {
+                filter: brightness(1.15);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            }
+
+            &:active {
+                transform: translateY(0);
+                filter: brightness(0.9);
+            }
+        }
 
         input {
-            padding: 8px 12px;
-            border-radius: 8px;
+            height: 40px;
+            padding: 0 14px;
+            border-radius: 10px;
             border: 1px solid var(--card-border);
-            background: rgba(0,0,0,0.25);
+            background: rgba(0, 0, 0, 0.25);
             color: var(--text-light);
             backdrop-filter: blur(16px);
             min-width: 260px;
+            outline: none;
+            transition: 0.3s;
 
             &::placeholder {
                 color: var(--text-muted);
             }
-        }
 
-        .btn {
-            padding: 8px 14px;
-            border-radius: 8px;
-            border: none;
-            background: var(--primary);
-            color: #fff;
-            cursor: pointer;
-            transition: 0.3s;
-
-            &:hover {
-                background: #4338ca;
+            &:focus {
+                border-color: var(--primary);
+                background: rgba(0, 0, 0, 0.4);
             }
         }
     }
@@ -112,23 +137,23 @@ table {
     color: var(--text-light);
 
     thead {
-        background: rgba(255,255,255,0.06);
+        background: rgba(255, 255, 255, 0.06);
     }
 
     th {
         padding: 10px;
         text-align: left;
         font-size: 0.9rem;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     td {
         padding: 10px;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     tbody tr:hover {
-        background: rgba(255,255,255,0.04);
+        background: rgba(255, 255, 255, 0.04);
     }
 
     .empty {
@@ -146,9 +171,17 @@ table {
     text-transform: capitalize;
     color: #fff;
 
-    &.ok { background: var(--success); }
-    &.warn { background: var(--warning); }
-    &.bad { background: var(--danger); }
+    &.ok {
+        background: var(--success);
+    }
+
+    &.warn {
+        background: var(--warning);
+    }
+
+    &.bad {
+        background: var(--danger);
+    }
 }
 
 .loading {
