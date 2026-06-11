@@ -1,18 +1,11 @@
 <div class="historial-container">
-
     <h2>Historial de Accesos al Sistema</h2>
-
     <div class="header-row">
         <div>
             <p class="muted">Registro de inicios de sesión en la plataforma web.</p>
         </div>
-
         <div class="controls">
-            <button class="btn-csv" (click)="descargarAccesosCSV()" title="Descargar reporte">
-                <span class="material-symbols-outlined">download</span>
-            </button>
-
-            <input type="text" placeholder="Buscar usuario..." [(ngModel)]="filtroAccesos">
+            <input type="text" placeholder="Buscar por tipo o IP..." [(ngModel)]="filtroAccesos">
         </div>
     </div>
 
@@ -25,45 +18,20 @@
             <thead>
                 <tr>
                     <th>Fecha</th>
-                    <th>Usuario</th>
-                    <th>IP</th>
-                    <th>Navegador</th>
+                    <th>Tipo de Evento</th>
+                    <th>Dirección IP</th>
                     <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let r of accesosFiltrados">
-                    <td>{{ fmtFecha(r.fecha) }}</td>
-
+                    <td>{{ r.executed_at | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ r.event_type }}</td>
+                    <td>{{ r.client_ip }}</td>
                     <td>
-                        <div class="user-info-cell">
-                            <strong>
-                                {{ $any(r.usuario)?.nombre || r.usuario || 'Desconocido' }}
-                            </strong>
-
-                            <small *ngIf="$any(r.usuario)?.correo" style="display: block; color: #6b7280;">
-                                {{ $any(r.usuario).correo }}
-                            </small>
-                        </div>
-                    </td>
-
-                    <td>{{ r.ip }}</td>
-
-                    <td class="small-text" title="{{r.navegador}}">
-                        {{ r.navegador ? r.navegador.substring(0, 40) + '...' : 'N/A' }}
-                    </td>
-
-                    <td>
-                        <span class="badge" [class.ok]="$any(r.resultado) === 'Exitoso' || $any(r.resultado) === true"
-                            [class.error]="$any(r.resultado) !== 'Exitoso' && $any(r.resultado) !== true">
-                            {{ r.resultado || 'Exitoso' }}
+                        <span class="badge" [ngClass]="getStatusClass(r.event_status)">
+                            {{ r.event_status }}
                         </span>
-                    </td>
-                </tr>
-
-                <tr *ngIf="accesosFiltrados.length === 0">
-                    <td colspan="5" class="empty">
-                        No se encontraron registros que coincidan.
                     </td>
                 </tr>
             </tbody>

@@ -1,5 +1,4 @@
 <div class="admin-console">
-
     <div class="kpi-grid">
         <div class="kpi-card" *ngFor="let k of kpis">
             <h3>{{ k.label }}</h3>
@@ -12,20 +11,13 @@
             <h2>Tendencia Semanal</h2>
             <canvas id="weeklyChart"></canvas>
         </div>
-
         <div class="chart-box">
-            <h2>Tipos de Incidentes</h2>
+            <h2>Incidentes por Tipo</h2>
             <canvas id="incidentTypesChart"></canvas>
         </div>
-    </div>
-
-    <div class="panel">
-        <h2>Seguridad</h2>
-        <div class="security">
-            <p>Intentos fallidos: <strong>{{ securityStats.failedAttempts }}</strong></p>
-            <p>Intentos exitosos: <strong>{{ securityStats.successfulAttempts }}</strong></p>
-            <p>Último acceso admin: <strong>{{ securityStats.lastAdminAccess }}</strong></p>
-            <p>Usuarios activos: <strong>{{ securityStats.activeUsers }}</strong></p>
+        <div class="chart-box">
+            <h2>Distribución de Riesgo</h2>
+            <canvas id="riskDistributionChart"></canvas>
         </div>
     </div>
 </div>

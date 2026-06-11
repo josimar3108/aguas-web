@@ -6,45 +6,63 @@ import { Incident } from '../Interfaces/incident.interface';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class IncidentsService {
-
   private baseUrl = environment.apiBaseUrl || 'http://10.151.204.19:5000';
-  private readonly CLAVE_SECRETA = 'AguasMovilSeguro'; 
+  private readonly CLAVE_SECRETA = 'AguasMovilSeguro';
 
   constructor(private http: HttpClient) {}
 
   getAllReal(): Observable<Incident[]> {
     return this.http.get<string[]>(`${this.baseUrl}/obtener_reportes`).pipe(
-      map(encryptedList => {
+      map((encryptedList) => {
         let allIncidents: Incident[] = [];
 
-        encryptedList.forEach(encryptedString => {
+        encryptedList.forEach((encryptedString) => {
           try {
-            const cleanString = encryptedString.replace(/\s/g, ''); 
-            const bytes = CryptoJS.AES.decrypt(cleanString, CryptoJS.enc.Utf8.parse(this.CLAVE_SECRETA), {
-              mode: CryptoJS.mode.ECB,
-              padding: CryptoJS.pad.Pkcs7
-            });
-            
+            const cleanString = encryptedString.replace(/\s/g, '');
+            const bytes = CryptoJS.AES.decrypt(
+              cleanString,
+              CryptoJS.enc.Utf8.parse(this.CLAVE_SECRETA),
+              {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7,
+              },
+            );
+
             const jsonString = bytes.toString(CryptoJS.enc.Utf8);
 
             if (jsonString) {
               const userReports: any[] = JSON.parse(jsonString);
 
-              const mappedReports: Incident[] = userReports.map(r => ({
-                id: r.idReporte,
-                type: r.type || r.tipo,
-                description: r.descripcion,
-                latitude: r.datosGeo?.latitud || r.latitud || 0,
-                longitude: r.datosGeo?.longitud || r.longitud || 0,
-                address: r.datosGeo?.direccion || 'Ubicación GPS',
-                weather: r.datosClima?.condicion || r.clima || 'Desconocido',
-                temperature: r.datosClima?.temperatura, 
-                fecha: r.fecha, 
-                status: r.estado || 'PENDIENTE',
-                severity: this.calcularSeveridad(r.type || r.tipo)
+              const mappedReports: Incident[] = userReports.map((r) => ({
+                // Mapeo directo a los campos de la base de datos (REPORTS)
+                id: r.report_id || r.idReporte,
+                type: r.incident_type || r.type || r.tipo || 'Desconocido',
+                description: r.description || r.descripcion || '',
+                fecha: r.created_at || r.fecha || '',
+                status: r.status || r.estado || 'PENDIENTE',
+                image_url: r.image_url || '', // Tu nueva columna LONGTEXT en Base64
+
+                // Mapeo a los campos de la tabla GEOLOCATION_DATA
+                latitude: r.latitude || r.latitud || r.datosGeo?.latitud || 0,
+                longitude:
+                  r.longitude || r.longitud || r.datosGeo?.longitud || 0,
+                address:
+                  r.address_text || r.datosGeo?.direccion || 'Ubicación GPS',
+
+                // Mapeo a los campos de la tabla WEATHER_DATA
+                weather:
+                  r.weather_condition ||
+                  r.clima ||
+                  r.datosClima?.condicion ||
+                  'Desconocido',
+                temperature: r.temperature || r.datosClima?.temperatura,
+
+                severity: this.calcularSeveridad(
+                  r.incident_type || r.type || r.tipo || '',
+                ),
               }));
 
               allIncidents = [...allIncidents, ...mappedReports];
@@ -55,14 +73,19 @@ export class IncidentsService {
         });
 
         return allIncidents;
-      })
+      }),
     );
   }
 
   private calcularSeveridad(tipo: string): string {
     if (!tipo) return 'Baja';
     const t = tipo.toLowerCase();
-    if (t.includes('accidente') || t.includes('incendio') || t.includes('inundacion')) return 'Alta';
+    if (
+      t.includes('accidente') ||
+      t.includes('incendio') ||
+      t.includes('inundacion')
+    )
+      return 'Alta';
     if (t.includes('asalto') || t.includes('robo')) return 'Media';
     return 'Baja';
   }

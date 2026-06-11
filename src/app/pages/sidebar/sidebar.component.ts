@@ -40,7 +40,7 @@ export class SidebarComponent
       { nombre: 'Reportes', icono: 'report', accion: '/reportes' },
       { nombre: 'Mapa', icono: 'map', accion: '/map-page' },
       { nombre: 'Alertas', icono: 'notifications', accion: '/alertas' },
-      { nombre: 'Historial', icono: 'history', accion: '/historial-admin' },
+      //{ nombre: 'Historial', icono: 'history', accion: '/historial-admin' },
       { nombre: 'Estadísticas', icono: 'analytics', accion: '/estadisticas' },
       //{ nombre: 'Comunidad', icono: 'groups', accion: '/comunidad' },
       { nombre: 'Configuración', icono: 'settings', accion: '/configuracion' },

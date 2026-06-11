@@ -13,9 +13,13 @@
       <div class="map-inner">
         <google-map [height]="'100%'" [width]="'100%'" [center]="center" [zoom]="zoom">
 
-          <map-marker *ngFor="let inc of realIncidents" [position]="{lat: inc.latitude, lng: inc.longitude}"
-            [title]="inc.type" [icon]="obtenerIcono(inc.type)">
-          </map-marker>
+          <ng-container *ngFor="let inc of realIncidents">
+            <map-marker *ngIf="inc.latitude && inc.longitude"
+              [position]="obtenerPosicionSegura(inc)" 
+              [title]="inc.type"
+              [icon]="obtenerIcono(inc.type)">
+            </map-marker>
+          </ng-container>
 
         </google-map>
       </div>

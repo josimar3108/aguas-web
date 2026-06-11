@@ -8,16 +8,18 @@ import { HistorialAcceso } from '../Interfaces/historial-acceso.model';
   providedIn: 'root'
 })
 export class AccesosService {
-  private apiUrlGet = `${environment.apiBaseUrl}/obtener_accesos`;
-  private apiUrlPost = `${environment.apiBaseUrl}/registrar_acceso`;
+  // Definimos la base, no la ruta final, para evitar confusiones
+  private apiUrl = environment.apiBaseUrl;
 
   constructor(private http: HttpClient) {}
 
+  // CORRECCIÓN: Apunta directamente a /logs
   listarAccesos(): Observable<HistorialAcceso[]> {
-    return this.http.get<HistorialAcceso[]>(this.apiUrlGet);
+    return this.http.get<HistorialAcceso[]>(`${this.apiUrl}/logs`); 
   }
 
-  registrarNuevoAcceso(datos: any): Observable<any> {
-    return this.http.post(this.apiUrlPost, datos, { responseType: 'text' });
+  // CORRECCIÓN: Apunta directamente a /accesos (tal cual definiste en Python)
+  registrarIntento(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/accesos`, data);
   }
 }

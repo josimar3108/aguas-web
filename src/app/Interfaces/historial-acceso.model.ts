@@ -1,12 +1,7 @@
-export type ResultadoAcceso = 'exitoso'|'fallido'|'bloqueado';
-
 export interface HistorialAcceso {
-    id?: number;
-    fecha: string;
-    usuario: string;
-    ip: string;
-    navegador: string;
-    resultado: ResultadoAcceso | string;
-    intentos: number;
-    ubicacion?: string;
+  log_id?: number;
+  event_type: string;
+  client_ip: string;
+  event_status: string;
+  executed_at: string; // CAMBIADO AQUÍ
 }

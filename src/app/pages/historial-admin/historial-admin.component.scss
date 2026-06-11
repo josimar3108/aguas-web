@@ -164,23 +164,28 @@ table {
 }
 
 .badge {
-    padding: 4px 10px;
-    border-radius: 999px;
+    padding: 5px 12px;
+    border-radius: 8px;
     font-weight: 600;
-    font-size: 12px;
-    text-transform: capitalize;
-    color: #fff;
+    font-size: 11px;
+    text-transform: uppercase;
 
     &.ok {
-        background: var(--success);
-    }
-
-    &.warn {
-        background: var(--warning);
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+        border: 1px solid #10b981;
     }
 
     &.bad {
-        background: var(--danger);
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        border: 1px solid #ef4444;
+    }
+
+    &.warn {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+        border: 1px solid #f59e0b;
     }
 }
 

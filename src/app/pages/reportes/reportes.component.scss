@@ -12,6 +12,126 @@
         margin-bottom: 20px;
     }
 
+    .counters-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        /* Forzamos a que no salten de línea */
+        gap: 10px;
+        /* Reducimos ligeramente el espacio para que quepan todos */
+        margin-bottom: 25px;
+        overflow-x: auto;
+        /* Si la pantalla se hace muy pequeña, permite deslizar en lugar de amontonarse */
+        padding-bottom: 8px;
+        /* Espacio por si aparece la barra de scroll */
+
+        /* Estilo sutil para la barra de scroll horizontal */
+        &::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        .counter-card {
+            flex: 1 1 0px;
+            /* Obliga a que todos los botones tengan exactamente el mismo ancho */
+            min-width: 90px;
+            /* Reducimos el ancho mínimo */
+            background: rgba(35, 45, 70, 0.55);
+            border: 1px solid var(--card-border, #334155);
+            border-radius: 12px;
+            padding: 12px 8px;
+            /* Un poco menos de padding interior */
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            /* Evita que el nombre de la categoría se parta en dos líneas */
+
+            &:hover {
+                background: rgba(59, 130, 246, 0.2);
+                border-color: #3b82f6;
+                transform: translateY(-2px);
+            }
+
+            &.active {
+                background: #3b82f6;
+                border-color: #60a5fa;
+                color: white;
+
+                .count {
+                    color: white;
+                }
+
+                .label {
+                    color: #e2e8f0;
+                }
+            }
+
+            .count {
+                display: block;
+                font-size: 22px;
+                /* Un tamaño apenas más ajustado */
+                font-weight: bold;
+                color: #93c5fd;
+                margin-bottom: 5px;
+            }
+
+            .label {
+                display: block;
+                font-size: 11px;
+                /* Letra más compacta para textos largos como "Manifestación" */
+                color: #94a3b8;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                /* Si el texto es excesivamente largo, pondrá "..." */
+            }
+        }
+    }
+
+    /* Modifica ligeramente tus filters existentes para añadir el texto de resultados */
+    .filters {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        background: #1e293b;
+        padding: 15px 20px;
+        border-radius: 12px;
+        border: 1px solid #334155;
+
+        label {
+            font-weight: bold;
+            color: #93c5fd;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: var(--bg-main);
+            color: white;
+            border: 1px solid #475569;
+            outline: none;
+            cursor: pointer;
+
+            &:focus {
+                border-color: #3b82f6;
+            }
+        }
+
+        .results-text {
+            margin-left: auto;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+
     .filters {
         display: flex;
         align-items: center;
@@ -210,6 +330,51 @@
             padding: 4px 10px;
             border-radius: 6px;
             font-weight: bold;
+        }
+
+        /* --- Estilos para la Evidencia Fotográfica --- */
+        .evidence-container {
+            margin-top: 20px;
+            width: 100%;
+
+            p strong {
+                color: #93c5fd;
+                /* Azul claro para combinar con el modal */
+                display: block;
+                margin-bottom: 8px;
+            }
+
+            .evidence-image {
+                width: 100%;
+                max-height: 250px;
+                object-fit: cover;
+                border-radius: 8px;
+                border: 1px solid #334155;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .no-evidence-box {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(255, 255, 255, 0.03);
+                /* Fondo oscuro muy sutil */
+                border: 1px dashed #475569;
+                /* Borde punteado para indicar área vacía */
+                border-radius: 8px;
+                padding: 30px;
+                color: #64748b;
+                /* Texto grisáceo/azulado */
+                text-align: center;
+                font-size: 0.9rem;
+
+                .material-symbols-outlined {
+                    font-size: 36px;
+                    color: #475569;
+                }
+            }
         }
     }
 }

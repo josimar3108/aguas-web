@@ -25,7 +25,7 @@ export class LoginComponent {
     private enrutador: Router,
     private servicioUsuarios: ServicioUsuarios,
     private servicioAccesos: AccesosService,
-    private constructorFormulario: FormBuilder
+    private constructorFormulario: FormBuilder,
   ) {
     this.formularioLogin = this.constructorFormulario.group({
       usuario: ['', Validators.required],
@@ -68,7 +68,7 @@ export class LoginComponent {
 
               localStorage.setItem(
                 'usuarioSesion',
-                JSON.stringify(usuarioEncontrado)
+                JSON.stringify(usuarioEncontrado),
               );
 
               this.enrutador.navigate(['/home']);
@@ -88,7 +88,7 @@ export class LoginComponent {
       (error) => {
         console.error(error);
         this.mensajeError = 'Error de conexión con el servidor.';
-      }
+      },
     );
   }
 
@@ -96,16 +96,16 @@ export class LoginComponent {
     const nuevoAcceso = {
       fecha: new Date().toISOString(),
       usuario: usuario,
-      ip: 'Web Admin', 
+      ip: 'Web Admin',
       navegador: navigator.userAgent,
       resultado: resultado,
       intentos: 1,
       ubicacion: 'México',
     };
 
-    this.servicioAccesos.registrarNuevoAcceso(nuevoAcceso).subscribe({
-      next: () => console.log(`Intento registrado: ${resultado}`),
-      error: (err) => console.error('Error al registrar acceso', err),
+    this.servicioAccesos.registrarIntento(nuevoAcceso).subscribe({
+      // Definimos el tipo de 'err' como 'any' para satisfacer a Angular
+      error: (err: any) => console.error('Error al registrar acceso', err),
     });
   }
 }

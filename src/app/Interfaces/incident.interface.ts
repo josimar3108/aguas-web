@@ -10,4 +10,5 @@ export interface Incident {
   fecha: string;
   status: string;
   severity?: string;
+  image_url?: string; 
 }

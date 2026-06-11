@@ -4,6 +4,33 @@
         <h1 class="title">Monitor de Alertas</h1>
     </div>
 
+    <div class="counters-section">
+        <div class="counter-box pending">
+            <div class="info">
+                <span class="num">{{ statusCounters['Pendiente'] }}</span>
+                <span class="lbl">Pendiente</span>
+            </div>
+        </div>
+        <div class="counter-box active">
+            <div class="info">
+                <span class="num">{{ statusCounters['Activo'] }}</span>
+                <span class="lbl">Activo</span>
+            </div>
+        </div>
+        <div class="counter-box progress">
+            <div class="info">
+                <span class="num">{{ statusCounters['En Progreso'] }}</span>
+                <span class="lbl">En Progreso</span>
+            </div>
+        </div>
+        <div class="counter-box resolved">
+            <div class="info">
+                <span class="num">{{ statusCounters['Resuelto'] }}</span>
+                <span class="lbl">Resuelto</span>
+            </div>
+        </div>
+    </div>
+
     <div class="filters">
         <div class="filter-item">
             <label>Tipo de Incidente</label>
@@ -52,7 +79,7 @@
             </thead>
 
             <tbody>
-                <tr *ngFor="let i of filtered">
+                <tr *ngFor="let i of filtered" [ngClass]="getSeverityClass(i.type)">
                     <td>
                         <span class="type-indicator">{{ i.type }}</span>
                     </td>
@@ -84,11 +111,12 @@
 
                     <td>
                         <span class="tag" [ngClass]="{
-                            'status-pendiente': i.status === 'PENDIENTE',
-                            'status-enviado': i.status === 'ENVIADO',
-                            'status-resuelto': i.status === 'ATENDIDO' || i.status === 'RESUELTO'
+                            'status-pendiente': getDisplayStatus(i.status) === 'PENDIENTE',
+                            'status-activo': getDisplayStatus(i.status) === 'ACTIVO',
+                            'status-progreso': getDisplayStatus(i.status) === 'EN PROGRESO',
+                            'status-resuelto': getDisplayStatus(i.status) === 'RESUELTO'
                         }">
-                            {{ i.status || 'PENDIENTE' }}
+                            {{ getDisplayStatus(i.status) }}
                         </span>
                     </td>
                 </tr>

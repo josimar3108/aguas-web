@@ -23,6 +23,7 @@ interface PendingReport {
   type: string;
   location: string;
   timeReported: string;
+  originalType: string;
 }
 
 @Component({
@@ -41,34 +42,10 @@ export class HomeDashboardComponent implements OnInit, OnDestroy {
   private listaCompletaIncidentes: Incident[] = [];
 
   kpis: KpiMetric[] = [
-    {
-      title: 'Incidentes Activos',
-      value: '--',
-      indicator: 'neutral',
-      trend: 'Cargando...',
-      color: 'warning',
-    },
-    {
-      title: 'Tiempo Promedio (TMR)',
-      value: '--',
-      indicator: 'neutral',
-      trend: 'Calculando...',
-      color: 'success',
-    },
-    {
-      title: 'Tasa de Resolución',
-      value: '--',
-      indicator: 'neutral',
-      trend: '...',
-      color: 'primary',
-    },
-    {
-      title: 'Riesgo Operacional',
-      value: '--',
-      indicator: 'neutral',
-      trend: '...',
-      color: 'danger',
-    },
+    { title: 'Incidentes Activos', value: '--', indicator: 'neutral', trend: 'Cargando...', color: 'warning' },
+    { title: 'Tiempo Promedio (TMR)', value: '--', indicator: 'neutral', trend: 'Calculando...', color: 'success' },
+    { title: 'Tasa de Resolución', value: '--', indicator: 'neutral', trend: '...', color: 'primary' },
+    { title: 'Riesgo Operacional', value: '--', indicator: 'neutral', trend: '...', color: 'danger' },
   ];
 
   pendingReports: PendingReport[] = [];
@@ -88,6 +65,7 @@ export class HomeDashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.cargarDatosReales();
 
+    // El sistema sí se actualiza cada 30 segundos
     this.intervaloRefresco = setInterval(() => {
       this.cargarDatosReales();
     }, 30000);
@@ -116,118 +94,78 @@ export class HomeDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  // TRADUCTOR INTERNO PARA QUE LA TABLA Y EL HTML LEAN ESPAÑOL
+  private traducirTipo(tipoIngles: string): string {
+    const t = tipoIngles.toLowerCase().trim();
+    if (t === 'fire') return 'Incendio';
+    if (t === 'flood') return 'Inundación';
+    if (t === 'accident') return 'Accidente';
+    if (t === 'robbery') return 'Asalto';
+    if (t === 'water leak') return 'Fuga de Agua';
+    if (t === 'protest') return 'Manifestación';
+    if (t === 'road closure') return 'Vialidad Cerrada';
+    return tipoIngles; // Retorna original si no hace match
+  }
+
   private procesarKPIs(lista: Incident[]) {
     const total = lista.length;
+    const activos = lista.filter((i) => i.status === 'PENDIENTE' || i.status === 'Pending').length;
+    const resueltos = lista.filter((i) => i.status !== 'PENDIENTE' && i.status !== 'Pending').length;
+    const tasaResolucion = total > 0 ? Math.round((resueltos / total) * 100) : 0;
 
-    const activos = lista.filter((i) => i.status === 'PENDIENTE').length;
-
-    const resueltos = lista.filter((i) => i.status !== 'PENDIENTE').length;
-    const tasaResolucion =
-      total > 0 ? Math.round((resueltos / total) * 100) : 0;
-
-    const criticosActivos = lista.filter(
-      (i) =>
-        i.status === 'PENDIENTE' &&
-        (i.type.toLowerCase().includes('incendio') ||
-          i.type.toLowerCase().includes('asalto') ||
-          i.type.toLowerCase().includes('inundación'))
-    ).length;
+    // AHORA SÍ DETECTA LOS RIESGOS EN INGLÉS Y ESPAÑOL
+    const criticosActivos = lista.filter((i) => {
+      if (i.status !== 'PENDIENTE' && i.status !== 'Pending') return false;
+      const t = (i.type || '').toLowerCase();
+      return (
+        t.includes('incendio') || t.includes('fire') ||
+        t.includes('asalto') || t.includes('robbery') ||
+        t.includes('inundación') || t.includes('flood')
+      );
+    }).length;
 
     let nivelRiesgo = 'BAJO';
     let colorRiesgo: 'success' | 'warning' | 'danger' = 'success';
 
-    if (criticosActivos > 2) {
-      nivelRiesgo = 'MEDIO';
-      colorRiesgo = 'warning';
-    }
-    if (criticosActivos > 5) {
-      nivelRiesgo = 'ALTO';
-      colorRiesgo = 'danger';
-    }
+    if (criticosActivos > 2) { nivelRiesgo = 'MEDIO'; colorRiesgo = 'warning'; }
+    if (criticosActivos > 5) { nivelRiesgo = 'ALTO'; colorRiesgo = 'danger'; }
 
-    this.kpis[0] = {
-      title: 'Incidentes Activos',
-      value: activos.toString(),
-      indicator: activos > 5 ? 'up' : 'neutral',
-      trend: 'En tiempo real',
-      color: 'warning',
-    };
-
-    this.kpis[1] = {
-      title: 'Tiempo Promedio (TMR)',
-      value: 'N/A',
-      indicator: 'neutral',
-      trend: 'Requiere fecha cierre',
-      color: 'success',
-    };
-
-    this.kpis[2] = {
-      title: 'Tasa de Resolución',
-      value: `${tasaResolucion}%`,
-      indicator: tasaResolucion > 80 ? 'goal' : 'down',
-      trend:
-        tasaResolucion > 80 ? '✅ Objetivo cumplido' : '⚠️ Bajo rendimiento',
-      color: 'primary',
-    };
-
-    this.kpis[3] = {
-      title: 'Riesgo Operacional',
-      value: nivelRiesgo,
-      indicator: nivelRiesgo === 'ALTO' ? 'up' : 'neutral',
-      trend: `Críticos activos: ${criticosActivos}`,
-      color: colorRiesgo,
-    };
+    this.kpis[0] = { title: 'Incidentes Activos', value: activos.toString(), indicator: activos > 5 ? 'up' : 'neutral', trend: 'En tiempo real', color: 'warning' };
+    this.kpis[1] = { title: 'Tiempo Promedio (TMR)', value: 'N/A', indicator: 'neutral', trend: 'Requiere fecha cierre', color: 'success' };
+    this.kpis[2] = { title: 'Tasa de Resolución', value: `${tasaResolucion}%`, indicator: tasaResolucion > 80 ? 'goal' : 'down', trend: tasaResolucion > 80 ? '✅ Objetivo cumplido' : '⚠️ Bajo rendimiento', color: 'primary' };
+    this.kpis[3] = { title: 'Riesgo Operacional', value: nivelRiesgo, indicator: nivelRiesgo === 'ALTO' ? 'up' : 'neutral', trend: `Críticos activos: ${criticosActivos}`, color: colorRiesgo };
   }
 
   private procesarTablaPendientes(lista: Incident[]) {
     const pendientes = lista
-      .filter((i) => i.status === 'PENDIENTE')
-      .sort(
-        (a, b) =>
-          this.parsearFecha(b.fecha).getTime() -
-          this.parsearFecha(a.fecha).getTime()
-      )
+      .filter((i) => i.status === 'PENDIENTE' || i.status === 'Pending')
+      .sort((a, b) => this.parsearFecha(b.fecha).getTime() - this.parsearFecha(a.fecha).getTime())
       .slice(0, 5);
 
     this.pendingReports = pendientes.map((p) => ({
-      id: p.id.substring(0, 8),
-      type: p.type,
+      id: p.id ? p.id.substring(0, 8) : 'N/A',
+      type: this.traducirTipo(p.type || ''), // Traduce al español para la vista
+      originalType: p.type,
       location: p.address || 'Ubicación GPS',
       timeReported: this.calcularTiempoRelativo(p.fecha),
     }));
   }
 
   private procesarCargaEquipos(lista: Incident[]) {
-    const carga = {
-      'Obras Públicas ': 0,
-      'Tránsito ': 0,
-      'Bomberos ': 0,
-      'Policía ': 0,
-    };
+    const carga = { 'Obras Públicas ': 0, 'Tránsito ': 0, 'Bomberos ': 0, 'Policía ': 0 };
 
     lista.forEach((inc) => {
-      if (inc.status === 'PENDIENTE') {
-        const tipo = inc.type.toLowerCase();
+      if (inc.status === 'PENDIENTE' || inc.status === 'Pending') {
+        const tipo = (inc.type || '').toLowerCase();
 
-        if (
-          tipo.includes('fuga') ||
-          tipo.includes('inundación') ||
-          tipo.includes('bache')
-        ) {
+        // VALIDACIÓN BILINGÜE
+        if (tipo.includes('fuga') || tipo.includes('water leak') || tipo.includes('inundación') || tipo.includes('flood') || tipo.includes('bache')) {
           carga['Obras Públicas ']++;
-        } else if (
-          tipo.includes('choque') ||
-          tipo.includes('vialidad') ||
-          tipo.includes('accidente')
-        ) {
+        } else if (tipo.includes('choque') || tipo.includes('vialidad') || tipo.includes('road closure') || tipo.includes('accidente') || tipo.includes('accident')) {
           carga['Tránsito ']++;
-        } else if (tipo.includes('incendio') || tipo.includes('explosión')) {
+        } else if (tipo.includes('incendio') || tipo.includes('fire') || tipo.includes('explosión')) {
           carga['Bomberos ']++;
-        } else if (
-          tipo.includes('robo') ||
-          tipo.includes('asalto') ||
-          tipo.includes('manifestación')
-        ) {
+        } else if (tipo.includes('robo') || tipo.includes('robbery') || tipo.includes('asalto') || tipo.includes('manifestación') || tipo.includes('protest')) {
           carga['Policía ']++;
         } else {
           carga['Obras Públicas ']++;
@@ -242,16 +180,10 @@ export class HomeDashboardComponent implements OnInit, OnDestroy {
   }
 
   locateIncident(idVisual: string): void {
-    const incidente = this.listaCompletaIncidentes.find((i) =>
-      i.id.startsWith(idVisual)
-    );
-
+    const incidente = this.listaCompletaIncidentes.find((i) => i.id && i.id.startsWith(idVisual));
     if (incidente && this.mapa) {
       this.mapa.flyTo(incidente.latitude, incidente.longitude);
-
-      document
-        .querySelector('.map-section')
-        ?.scrollIntoView({ behavior: 'smooth' });
+      document.querySelector('.map-section')?.scrollIntoView({ behavior: 'smooth' });
     }
   }
 

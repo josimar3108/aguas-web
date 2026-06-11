@@ -1,8 +1,16 @@
 <div class="reportes-wrapper">
-    <h1 class="title">Reportes de Incidentes</h1>
+    <h1 class="title">Panel de Incidentes</h1>
+
+    <div class="counters-grid">
+        <div class="counter-card" *ngFor="let cat of categoriasContadores" (click)="setFilter(cat)"
+            [class.active]="(filterType === cat) || (filterType === '' && cat === 'Todos')">
+            <span class="count">{{ reportCounters[cat] }}</span>
+            <span class="label">{{ cat }}</span>
+        </div>
+    </div>
 
     <div class="filters">
-        <label>Tipo de incidente:</label>
+        <label>Filtrar por tipo:</label>
         <select [(ngModel)]="filterType" (change)="applyFilter()">
             <option value="">Todos</option>
             <option value="Accidente">Accidente</option>
@@ -14,13 +22,12 @@
             <option value="Fuga de Agua">Fuga de Agua</option>
             <option value="Otro">Otro</option>
         </select>
+        <span class="results-text">Mostrando {{ filteredIncidents.length }} resultado(s)</span>
     </div>
 
     <div class="report-list">
         <div class="report-card" *ngFor="let inc of filteredIncidents" (click)="showDetails(inc)">
-
             <h2>{{ inc.type || inc.tipo }}</h2>
-
             <p class="desc">{{ inc.description || inc.descripcion || 'Sin descripción.' }}</p>
 
             <span class="coords">
@@ -34,17 +41,14 @@
             </span>
 
             <div class="weather-info" *ngIf="(inc.weather || inc.clima) || (inc.temperature || inc.temperatura)">
-
                 <span *ngIf="inc.weather || inc.clima">
                     <span class="material-symbols-outlined icon-mini">cloud</span>
                     {{ inc.weather || inc.clima }}
                 </span>
-
                 <span *ngIf="inc.temperature || inc.temperatura">
                     <span class="material-symbols-outlined icon-mini">thermostat</span>
                     {{ inc.temperature || inc.temperatura }}°C
                 </span>
-
             </div>
 
             <div class="tags">
@@ -54,13 +58,12 @@
 
         <p *ngIf="filteredIncidents.length === 0 && !loading"
             style="color: #cbd5e1; grid-column: 1/-1; text-align: center;">
-            No se encontraron reportes.
+            No se encontraron reportes en esta categoría.
         </p>
     </div>
 
     <div class="modal-overlay" *ngIf="selectedIncident" (click)="closeDetails()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-
+        <div class="modal-content" (click)="$event.stopPropagation()" id="detailsView">
             <button class="close-btn" (click)="closeDetails()">
                 <span class="material-symbols-outlined">close</span>
             </button>
@@ -75,7 +78,6 @@
                         <span class="material-symbols-outlined icon-small">thermostat</span>
                         {{ selectedIncident.temperature || selectedIncident.temperatura }}°C
                     </span>
-
                     <span *ngIf="selectedIncident.weather || selectedIncident.clima">
                         <span class="material-symbols-outlined icon-small">cloud</span>
                         {{ selectedIncident.weather || selectedIncident.clima }}
@@ -95,8 +97,20 @@
                 <div class="tags" style="margin-top: 15px;">
                     <span class="tag status">{{ selectedIncident.status || 'PENDIENTE' }}</span>
                 </div>
-            </div>
 
+                <div class="evidence-container">
+                    <p><strong>Evidencia:</strong></p>
+
+                    <img *ngIf="selectedIncident.image_url && selectedIncident.image_url.length > 20"
+                        [src]="selectedIncident.image_url" alt="Evidencia del incidente" class="evidence-image">
+
+                    <div class="no-evidence-box"
+                        *ngIf="!selectedIncident.image_url || selectedIncident.image_url.length <= 20">
+                        <span class="material-symbols-outlined">hide_image</span>
+                        <span>Evidencia fotográfica no disponible o enlace no válido.</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

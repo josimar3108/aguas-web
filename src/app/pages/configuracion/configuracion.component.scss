@@ -92,6 +92,46 @@
     }
 }
 
+/* Estilos para el nuevo apartado de filtrado */
+.filtro-container {
+    background: var(--card-bg);
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: var(--text-light);
+
+    label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-muted);
+    }
+
+    select {
+        background: var(--input-bg);
+        color: var(--text-light);
+        border: 1px solid var(--card-border);
+        padding: 8px 16px;
+        border-radius: 8px;
+        outline: none;
+        cursor: pointer;
+        transition: 0.2s;
+
+        &:hover {
+            border-color: var(--primary);
+        }
+
+        &:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+        }
+    }
+}
+
 .acciones {
     display: flex;
     flex-direction: column;
