@@ -23,7 +23,7 @@ export class CreditosComponent
   equipo: Integrante[] = [
     {
       nombre: 'Angel Garza Flores',
-      id: 'al346718',
+      id: '346718',
       correo: 'al346718@edu.uaa.mx',
       departamento: 'Department of Electronic Systems',
       universidad: 'Autonomous University of Aguascalientes',
@@ -31,7 +31,7 @@ export class CreditosComponent
     },
     {
       nombre: 'Josimar Maldonado Rosales',
-      id: 'al347589',
+      id: '347589',
       correo: 'al347589@edu.uaa.mx',
       departamento: 'Department of Electronic Systems',
       universidad: 'Autonomous University of Aguascalientes',
@@ -39,7 +39,7 @@ export class CreditosComponent
     },
     {
       nombre: 'Ian Alejandro Hernandez Aranda',
-      id: 'al346169',
+      id: '346169',
       correo: 'al346169@edu.uaa.mx',
       departamento: 'Department of Electronic Systems',
       universidad: 'Autonomous University of Aguascalientes',
@@ -47,7 +47,7 @@ export class CreditosComponent
     },
     {
       nombre: 'Juan Osbaldo Escalera Valenciano',
-      id: 'al347491',
+      id: '347491',
       correo: 'al347491@edu.uaa.mx',
       departamento: 'Department of Electronic Systems',
       universidad: 'Autonomous University of Aguascalientes',
