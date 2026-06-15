@@ -20,6 +20,11 @@ import { AccesosService } from '../../services/accesos.service';
 export class LoginComponent {
   formularioLogin: FormGroup;
   mensajeError: string = '';
+  showPassword = false;
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   constructor(
     private enrutador: Router,
@@ -104,7 +109,6 @@ export class LoginComponent {
     };
 
     this.servicioAccesos.registrarIntento(nuevoAcceso).subscribe({
-      // Definimos el tipo de 'err' como 'any' para satisfacer a Angular
       error: (err: any) => console.error('Error al registrar acceso', err),
     });
   }

@@ -17,7 +17,6 @@ export class ReportesComponent implements OnInit {
   selectedIncident: any | null = null;
   loading: boolean = false;
 
-  // Mapa para unificar los términos de la BD (Inglés) con el Frontend (Español)
   categoryMap: { [key: string]: string[] } = {
     Accidente: ['accidente', 'medico', 'accident'],
     Asalto: ['asalto', 'robo', 'robbery', 'assault'],
@@ -28,7 +27,6 @@ export class ReportesComponent implements OnInit {
     'Fuga de Agua': ['fuga de agua', 'fuga', 'water leak'],
   };
 
-  // Contadores por categoría
   reportCounters: { [key: string]: number } = {
     Todos: 0,
     Accidente: 0,
@@ -41,7 +39,6 @@ export class ReportesComponent implements OnInit {
     Otro: 0,
   };
 
-  // Lista para iterar los contadores en el HTML
   categoriasContadores = Object.keys(this.reportCounters);
 
   constructor(private incidentService: IncidentsService) {}
@@ -73,7 +70,6 @@ export class ReportesComponent implements OnInit {
   }
 
   calcularContadores() {
-    // Reiniciar contadores
     Object.keys(this.reportCounters).forEach(
       (k) => (this.reportCounters[k] = 0),
     );
@@ -83,7 +79,6 @@ export class ReportesComponent implements OnInit {
       const tipo = (inc.tipo || inc.type || '').toString().toLowerCase().trim();
       let encontrado = false;
 
-      // Buscar en qué categoría encaja el reporte
       for (const [categoria, terminos] of Object.entries(this.categoryMap)) {
         if (terminos.includes(tipo)) {
           this.reportCounters[categoria]++;
@@ -107,11 +102,8 @@ export class ReportesComponent implements OnInit {
     this.closeDetails();
 
     if (this.filterType === '') {
-      // Si es "Todos", mostramos la lista completa
       this.filteredIncidents = [...this.incidents];
     } else if (this.filterType === 'Otro') {
-      // CASO ESPECIAL: "Otro"
-      // Extraemos todos los términos conocidos de todas nuestras categorías
       const todosLosTerminosConocidos = Object.values(this.categoryMap).flat();
 
       this.filteredIncidents = this.incidents.filter((inc) => {
@@ -119,13 +111,10 @@ export class ReportesComponent implements OnInit {
           .toString()
           .toLowerCase()
           .trim();
-        // Si el tipo de este incidente NO está en nuestra lista de términos conocidos, es un "Otro"
         return !todosLosTerminosConocidos.includes(tipo);
       });
     } else {
-      // CASO NORMAL: Filtramos por la categoría seleccionada (ej. Inundación)
       const validTypes = this.categoryMap[this.filterType] || [];
-
       this.filteredIncidents = this.incidents.filter((inc) => {
         const tipo = (inc.tipo || inc.type || '')
           .toString()

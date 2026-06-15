@@ -11,4 +11,7 @@ export interface Incident {
   status: string;
   severity?: string;
   image_url?: string; 
+  fecha_cierre?: string;
+  weather_condition?: string;
+  address_text?: string;
 }

@@ -37,22 +37,19 @@ export class IncidentsService {
               const userReports: any[] = JSON.parse(jsonString);
 
               const mappedReports: Incident[] = userReports.map((r) => ({
-                // Mapeo directo a los campos de la base de datos (REPORTS)
                 id: r.report_id || r.idReporte,
                 type: r.incident_type || r.type || r.tipo || 'Desconocido',
                 description: r.description || r.descripcion || '',
                 fecha: r.created_at || r.fecha || '',
                 status: r.status || r.estado || 'PENDIENTE',
-                image_url: r.image_url || '', // Tu nueva columna LONGTEXT en Base64
+                image_url: r.image_url || '', 
 
-                // Mapeo a los campos de la tabla GEOLOCATION_DATA
                 latitude: r.latitude || r.latitud || r.datosGeo?.latitud || 0,
                 longitude:
                   r.longitude || r.longitud || r.datosGeo?.longitud || 0,
                 address:
                   r.address_text || r.datosGeo?.direccion || 'Ubicación GPS',
 
-                // Mapeo a los campos de la tabla WEATHER_DATA
                 weather:
                   r.weather_condition ||
                   r.clima ||

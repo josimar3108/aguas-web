@@ -24,11 +24,10 @@ export class AlertasComponent implements OnInit {
     Inundación: ['inundación', 'inundacion', 'flood'],
     Incendio: ['incendio', 'fuego', 'fire'],
     Manifestación: ['manifestación', 'manifestacion', 'protest'],
-    'Vialidad Cerrada': ['vialidad cerrada', 'bloqueo', 'road closure'], // Espacio correcto
-    'Fuga de Agua': ['fuga de agua', 'fuga', 'water leak'], // Espacio correcto
+    'Vialidad Cerrada': ['vialidad cerrada', 'bloqueo', 'road closure'], 
+    'Fuga de Agua': ['fuga de agua', 'fuga', 'water leak'], 
   };
 
-  // Se agregó 'Total' aquí para que no marque error al asignarlo después
   statusCounters: { [key: string]: number } = {
     Pendiente: 0,
     'En Progreso': 0,
@@ -72,29 +71,27 @@ export class AlertasComponent implements OnInit {
     };
 
     this.incidents.forEach((inc) => {
-      // Normalizamos a mayúsculas para evitar errores de comparación
       const st = (inc.status || '').toUpperCase().trim();
 
-      // Ajustamos los comparadores según los datos reales de tu SQL
       if (st.includes('PEND')) {
         this.statusCounters['Pendiente']++;
       } else if (st.includes('PROG')) {
         this.statusCounters['En Progreso']++;
-      } else if (st === 'ACTIVE' || st === 'ACTIVO') {
-        // Aceptamos tanto el término en inglés (tu SQL) como en español
+      } else if (st.includes('ACTI') || st.includes('ACTIVE')) {
         this.statusCounters['Activo']++;
       } else if (st.includes('RESU') || st.includes('RESOL')) {
         this.statusCounters['Resuelto']++;
+      } else {
+        this.statusCounters['Pendiente']++;
       }
     });
   }
 
-  // --- FUNCIÓN ÚNICA (Se eliminó la duplicada) ---
   getDisplayStatus(st: string): string {
     const s = (st || '').toUpperCase().trim();
     if (s.includes('PEND')) return 'PENDIENTE';
     if (s.includes('PROG')) return 'EN PROGRESO';
-    if (s.includes('ACTI')) return 'ACTIVO';
+    if (s.includes('ACTI') || s.includes('ACTIVE')) return 'ACTIVO';
     if (s.includes('RESU') || s.includes('RESOL')) return 'RESUELTO';
     return s;
   }

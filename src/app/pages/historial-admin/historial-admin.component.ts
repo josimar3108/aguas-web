@@ -26,10 +26,8 @@ export class HistorialAdminComponent implements OnInit {
     this.loadingAccesos = true;
     this.accesosSvc.listarAccesos().subscribe({
       next: (d) => {
-        // AGREGA ESTO:
         console.log('Lo que llega de Python:', d);
-        
-        this.accesos = d; // Asignamos directamente para probar
+        this.accesos = d;
         this.loadingAccesos = false;
       },
       error: (e) => {

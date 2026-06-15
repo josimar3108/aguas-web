@@ -76,7 +76,6 @@ export class MapPageComponent implements OnInit {
     }
   }
 
-  // Convierte las coordenadas que llegan en texto desde la BD a números puros
   obtenerPosicionSegura(inc: any) {
     return { lat: Number(inc.latitude), lng: Number(inc.longitude) };
   }

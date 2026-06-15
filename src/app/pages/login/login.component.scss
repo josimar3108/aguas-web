@@ -117,8 +117,8 @@ input {
     transition: all 0.3s ease;
 }
 
-.textbox input:focus + label,
-.textbox input:not(:placeholder-shown) + label {
+.textbox input:focus+label,
+.textbox input:not(:placeholder-shown)+label {
     top: 6px;
     left: 12px;
     font-size: 12px;
@@ -167,12 +167,12 @@ input {
     color: var(--color-muted);
 }
 
-.login > p {
+.login>p {
     margin: 56px 0 0;
     font-size: 15px;
 }
 
-.login > p a {
+.login>p a {
     color: var(--color-muted);
 }
 
@@ -181,4 +181,36 @@ input {
     font-size: 14px;
     margin-top: 12px;
     text-align: center;
+}
+
+.password-container {
+    position: relative;
+
+    input {
+        padding-right: 40px !important;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        transition: 0.2s ease;
+
+        &:hover {
+            color: rgba(255, 255, 255, 1);
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
 }

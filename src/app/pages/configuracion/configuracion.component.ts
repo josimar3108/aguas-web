@@ -42,7 +42,6 @@ export class ConfiguracionComponent implements OnInit {
     this.usuariosService.obtenerUsuarios().subscribe({
       next: (data) => {
         this.usuarios = data;
-        // Esto te mostrará en la consola del navegador qué roles existen realmente
         console.log('Roles detectados en BD:', [
           ...new Set(data.map((u) => u.rol)),
         ]);
@@ -51,12 +50,10 @@ export class ConfiguracionComponent implements OnInit {
     });
   }
 
-  // Lógica del filtro
   filtrarUsuarios() {
     if (this.filtroRol === 'todos') {
       this.usuariosFiltrados = [...this.usuarios];
     } else {
-      // Aquí filtramos comparando directamente con 'Admin' o 'Citizen'
       this.usuariosFiltrados = this.usuarios.filter(
         (u) => u.rol === this.filtroRol,
       );
